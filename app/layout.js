@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import AuthButton from "@/components/header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,8 +22,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased p-6 bg-white text-black`}
       >
+        <header className="flex justify-between border-b border-b-foreground/10 justify-right mb-5">
+          <AuthButton />
+        </header>
         {children}
       </body>
     </html>
