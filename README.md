@@ -16,4 +16,5 @@
 - Save information in a auth table
 
 ## Docs
-- [text](https://jsforce.github.io/)
+- [Sap Concur API Reference](https://developer.concur.com/api-reference/)
+- [Link to the Auth Database](https://supabase.com/dashboard/project/bljuswzgabyuwjojhreo/settings/api)
