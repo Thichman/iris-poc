@@ -8,9 +8,12 @@
 - You will then have the full access to the feature.
 
 ## What needs to be done next
-- Connect salesforce account using jsforce package
-- Pull all salesforce tables from the account
+- Connect with SapConcur and get partnership access.
+- Integrate with their api and sdk implemintations.
 - Make those selectable in a frontend component
 - Have that data summarized by chatgpt and then exportable as a PDF
 - Then allow new users to login through their salesforce to connect to their production field
 - Save information in a auth table
+
+## Docs
+- [text](https://jsforce.github.io/)
