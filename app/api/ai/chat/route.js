@@ -1,51 +1,79 @@
-import { LangGraph } from '@langchain/langgraph';
 import { NextResponse } from 'next/server';
+import { ChatOpenAI } from '@langchain/openai';
+import { HumanMessage } from '@langchain/core/messages';
+import { tool } from '@langchain/core/tools';
+import { z } from 'zod';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
 
-// Initialize LangGraph
-const langGraph = new LangGraph();
-
-// Define the tools for the agent
-const tools = [
+// Define the calculator tool using the `tool` utility
+const calculatorTool = tool(
+    async (input) => {
+        try {
+            const result = eval(input.expression); // Caution: Avoid eval in production
+            return `The result is ${result}`;
+        } catch (error) {
+            return `Error: ${error.message}`;
+        }
+    },
     {
         name: 'calculator',
         description: 'Performs simple math operations.',
-        execute: async (input) => {
-            try {
-                const result = eval(input); // Basic calculator logic
-                return `The result is ${result}`;
-            } catch {
-                return 'Error: Invalid math expression.';
-            }
-        },
-    },
-];
+        schema: z.object({
+            expression: z.string().describe('A mathematical expression to evaluate'),
+        }),
+    }
+);
 
-// Add the agent to LangGraph
-langGraph.addAgent({
-    id: 'math_agent',
-    tools,
-    model: {
-        type: 'chat',
-        provider: 'openai',
-        options: {
-            apiKey: process.env.OPENAI_API_KEY,
-            modelName: 'gpt-4',
-        },
-    },
-    prompt: {
-        system:
-            'You are an intelligent assistant. Use tools only when required to answer user queries.',
-    },
-});
+// Initialize the ToolNode
+const toolNode = new ToolNode([calculatorTool]);
+
+// Create the model and bind tools
+const model = new ChatOpenAI({
+    model: 'gpt-4',
+    temperature: 0,
+    openAIApiKey: process.env.ARCTECH_OPENAI_KEY,
+}).bindTools([calculatorTool]);
+
+// Define the function to call the model
+async function callModel(state) {
+    const { messages } = state;
+    const response = await model.invoke(messages);
+    return { messages: response };
+}
+
+// Define the decision logic
+function shouldContinue({ messages }) {
+    const lastMessage = messages[messages.length - 1];
+    if ('tool_calls' in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls.length > 0) {
+        return 'tools'; // Route to tools if a tool call is detected
+    }
+    return '__end__'; // Stop if no tool call is needed
+}
+
+// Define the workflow using StateGraph
+const workflow = new StateGraph(MessagesAnnotation)
+    .addNode('agent', callModel)
+    .addNode('tools', toolNode)
+    .addEdge('__start__', 'agent')
+    .addConditionalEdges('agent', shouldContinue)
+    .addEdge('tools', 'agent')
+    .compile();
 
 export async function POST(req) {
     try {
         const { query } = await req.json();
 
-        // Run the agent
-        const response = await langGraph.runAgent('math_agent', query);
+        // Run the compiled app with the user query
+        const response = await workflow.invoke({
+            messages: [new HumanMessage(query)],
+        });
 
-        return NextResponse.json({ reply: response });
+        // Extract the final response
+        const reply =
+            response.messages[response.messages.length - 1].content;
+
+        return NextResponse.json({ reply });
     } catch (error) {
         console.error('Error running LangGraph agent:', error);
         return NextResponse.json({ error: 'Error processing request.' });
