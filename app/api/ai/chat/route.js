@@ -1,36 +1,53 @@
-export const maxDuration = 60;
-import { OpenAI } from 'openai';
+import { LangGraph } from '@langchain/langgraph';
 import { NextResponse } from 'next/server';
 
-const openai = new OpenAI({
-    apiKey: process.env.ARCTECH_OPENAI_KEY,
+// Initialize LangGraph
+const langGraph = new LangGraph();
+
+// Define the tools for the agent
+const tools = [
+    {
+        name: 'calculator',
+        description: 'Performs simple math operations.',
+        execute: async (input) => {
+            try {
+                const result = eval(input); // Basic calculator logic
+                return `The result is ${result}`;
+            } catch {
+                return 'Error: Invalid math expression.';
+            }
+        },
+    },
+];
+
+// Add the agent to LangGraph
+langGraph.addAgent({
+    id: 'math_agent',
+    tools,
+    model: {
+        type: 'chat',
+        provider: 'openai',
+        options: {
+            apiKey: process.env.OPENAI_API_KEY,
+            modelName: 'gpt-4',
+        },
+    },
+    prompt: {
+        system:
+            'You are an intelligent assistant. Use tools only when required to answer user queries.',
+    },
 });
 
 export async function POST(req) {
     try {
-        const { messages } = await req.json();
+        const { query } = await req.json();
 
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-                { role: 'system', content: 'You are a helpful assistant that answers questions about the data that is provided to it.' },
-                ...messages.map(msg => ({
-                    role: msg.position === 'left' ? 'assistant' : 'user',
-                    content: msg.text,
-                })),
-            ],
-            max_tokens: 300,
-            temperature: 0.7,
-            top_p: 1.0,
-            frequency_penalty: 0.0,
-            presence_penalty: 0.6,
-        });
+        // Run the agent
+        const response = await langGraph.runAgent('math_agent', query);
 
-        const reply = response.choices[0].message.content.trim();
-
-        return NextResponse.json({ reply });
+        return NextResponse.json({ reply: response });
     } catch (error) {
-        console.error('Error in OpenAI API request:', error);
-        return NextResponse.json({ error: 'Error generating response' });
+        console.error('Error running LangGraph agent:', error);
+        return NextResponse.json({ error: 'Error processing request.' });
     }
 }

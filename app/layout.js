@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased p-6 bg-white text-black`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased p-6 bg-black text-white`}
       >
         <div className="">
           <header className="flex border-b border-b-foreground/10 justify-right mb-5 h-24 justify-items-end justify-end space-x-4">
