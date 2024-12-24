@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Dashboard() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Generate a unique session ID for the user
+    const sessionId = useState(uuidv4())[0];
 
     const sendMessage = async () => {
         if (!input.trim()) return;
@@ -19,7 +23,7 @@ export default function Dashboard() {
             const res = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: input }),
+                body: JSON.stringify({ query: input, sessionId }),
             });
 
             const data = await res.json();
@@ -64,8 +68,8 @@ export default function Dashboard() {
                     onClick={sendMessage}
                     disabled={loading}
                     className={`p-2 rounded-md ${loading
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                         } text-white`}
                 >
                     {loading ? 'Sending...' : 'Send'}

@@ -6,11 +6,14 @@ import { z } from 'zod';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
 
+// In-memory session memory (resets when server restarts)
+const sessionMemory = {};
+
 // Define the calculator tool using the `tool` utility
 const calculatorTool = tool(
     async (input) => {
         try {
-            const result = eval(input.expression); // Caution: Avoid eval in production
+            const result = eval(input.expression); // Avoid eval in production
             return `The result is ${result}`;
         } catch (error) {
             return `Error: ${error.message}`;
@@ -62,12 +65,29 @@ const workflow = new StateGraph(MessagesAnnotation)
 
 export async function POST(req) {
     try {
-        const { query } = await req.json();
+        const { query, sessionId } = await req.json();
 
-        // Run the compiled app with the user query
+        if (!sessionId) {
+            return NextResponse.json({ error: 'Session ID is required.' });
+        }
+
+        // Initialize session memory if not already set
+        if (!sessionMemory[sessionId]) {
+            sessionMemory[sessionId] = [];
+        }
+
+        // Append user query to memory
+        sessionMemory[sessionId].push(new HumanMessage(query));
+
+        // Run the compiled app with session memory
         const response = await workflow.invoke({
-            messages: [new HumanMessage(query)],
+            messages: sessionMemory[sessionId],
         });
+
+        // Append the response to memory
+        sessionMemory[sessionId].push(
+            response.messages[response.messages.length - 1]
+        );
 
         // Extract the final response
         const reply =
