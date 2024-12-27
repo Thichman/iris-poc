@@ -1,44 +1,25 @@
 import { NextResponse } from 'next/server';
 import { ChatOpenAI } from '@langchain/openai';
 import { HumanMessage } from '@langchain/core/messages';
-import { tool } from '@langchain/core/tools';
-import { z } from 'zod';
-import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
+import { standardToolNode } from '@/app/ai/functions/standard/standard-tool-node';
+import { calculatorTool } from '@/app/ai/functions/standard/calculator-test';
+import { weatherTool } from '@/app/ai/functions/standard/weather';
 
-// In-memory session memory (resets when server restarts)
 const sessionMemory = {};
 
-// Define the calculator tool using the `tool` utility
-const calculatorTool = tool(
-    async (input) => {
-        try {
-            const result = eval(input.expression); // Avoid eval in production
-            return `The result is ${result}`;
-        } catch (error) {
-            return `Error: ${error.message}`;
-        }
-    },
-    {
-        name: 'calculator',
-        description: 'Performs simple math operations.',
-        schema: z.object({
-            expression: z.string().describe('A mathematical expression to evaluate'),
-        }),
-    }
-);
-
-// Initialize the ToolNode
-const toolNode = new ToolNode([calculatorTool]);
-
-// Create the model and bind tools
 const model = new ChatOpenAI({
     model: 'gpt-4',
     temperature: 0,
     openAIApiKey: process.env.ARCTECH_OPENAI_KEY,
-}).bindTools([calculatorTool]);
+}).bindTools([calculatorTool, weatherTool]);
 
-// Define the function to call the model
+// const model = new ChatOpenAI({
+//     model: 'gpt-4',
+//     temperature: 0,
+//     openAIApiKey: process.env.ARCTECH_OPENAI_KEY,
+// });
+
 async function callModel(state) {
     const { messages } = state;
     const response = await model.invoke(messages);
@@ -54,10 +35,9 @@ function shouldContinue({ messages }) {
     return '__end__'; // Stop if no tool call is needed
 }
 
-// Define the workflow using StateGraph
 const workflow = new StateGraph(MessagesAnnotation)
     .addNode('agent', callModel)
-    .addNode('tools', toolNode)
+    .addNode('tools', standardToolNode)
     .addEdge('__start__', 'agent')
     .addConditionalEdges('agent', shouldContinue)
     .addEdge('tools', 'agent')
@@ -71,25 +51,20 @@ export async function POST(req) {
             return NextResponse.json({ error: 'Session ID is required.' });
         }
 
-        // Initialize session memory if not already set
         if (!sessionMemory[sessionId]) {
             sessionMemory[sessionId] = [];
         }
 
-        // Append user query to memory
         sessionMemory[sessionId].push(new HumanMessage(query));
 
-        // Run the compiled app with session memory
         const response = await workflow.invoke({
             messages: sessionMemory[sessionId],
         });
 
-        // Append the response to memory
         sessionMemory[sessionId].push(
             response.messages[response.messages.length - 1]
         );
 
-        // Extract the final response
         const reply =
             response.messages[response.messages.length - 1].content;
 
