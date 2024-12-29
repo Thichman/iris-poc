@@ -24,8 +24,22 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased p-6 bg-black text-white`}
       >
-        <div className="">
-          <header className="flex border-b border-b-foreground/10 justify-right mb-5 h-24 justify-items-end justify-end space-x-4">
+        <div>
+          <header className="flex items-center justify-between border-b border-b-foreground/10 mb-5 h-24 px-6">
+            <div className="text-xl font-bold">
+              <a href="/">MyApp</a>
+            </div>
+            <nav className="flex space-x-8">
+              <a href="/" className="hover:text-gray-300 text-xl font-bold">
+                Home
+              </a>
+              <a href="/dashboard" className="hover:text-gray-300 text-xl font-bold">
+                Dashboard
+              </a>
+              <a href="/settings" className="hover:text-gray-300 text-xl font-bold">
+                Settings
+              </a>
+            </nav>
             <AuthButton />
           </header>
           {children}

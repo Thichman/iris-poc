@@ -20,6 +20,7 @@ export default function Dashboard() {
         setMessages((prev) => [...prev, userMessage]);
 
         try {
+            setInput('');
             const res = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -12,9 +12,9 @@ async function callMainAgent(state) {
 function shouldContinue({ messages }) {
     const lastMessage = messages[messages.length - 1];
     if ('tool_calls' in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls.length > 0) {
-        return 'tools'; // Route to tools if tool calls are detected
+        return 'tools';
     }
-    return '__end__'; // Stop if no tool call is needed
+    return '__end__';
 }
 
 export const mainWorkflow = new StateGraph(MessagesAnnotation)
