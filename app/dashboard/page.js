@@ -44,7 +44,7 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="bg-black text-white min-h-screen flex flex-col items-center justify-center">
+        <div className="bg-black text-white mt-24 flex flex-col items-center justify-center">
             <h1 className="text-2xl font-bold mb-4">Chat with LangGraph Agent</h1>
             <div className="bg-white text-black rounded-lg shadow-md p-4 w-full max-w-lg h-96 overflow-y-scroll mb-4">
                 {messages.map((msg, index) => (
