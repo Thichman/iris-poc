@@ -2,7 +2,7 @@ import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 
-//TODO: This does not work and needs to be fixed
+// TODO: This does not work and needs to be fixed
 export const pdfExporterTool = tool(
     async (input) => {
         try {
