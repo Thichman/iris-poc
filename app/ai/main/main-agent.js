@@ -27,6 +27,7 @@ function shouldContinue({ messages }) {
     return '__end__';
 }
 
+// Export the main workflow
 export const mainWorkflow = new StateGraph(MessagesAnnotation)
     .addNode('main_agent', callMainAgent)
     .addNode('tools', mainToolsNode) // This remains as it handles tool execution
