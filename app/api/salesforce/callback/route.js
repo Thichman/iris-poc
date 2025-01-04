@@ -14,12 +14,8 @@ export async function POST(req) {
             );
         }
 
-        // Retrieve the PKCE verifier from cookies
         const cookieStore = await cookies();
         const codeVerifier = cookieStore.get('pkce_verifier')?.value;
-
-        // Log the retrieved PKCE code verifier
-        console.log('Retrieved PKCE Code Verifier:', codeVerifier);
 
         if (!codeVerifier) {
             console.error('PKCE code verifier missing');
@@ -29,7 +25,6 @@ export async function POST(req) {
             );
         }
 
-        // Exchange the authorization code for tokens
         const tokenResponse = await axios.post(
             process.env.NEXT_PUBLIC_SALESFORCE_TOKEN_URL,
             new URLSearchParams({
@@ -38,7 +33,7 @@ export async function POST(req) {
                 client_id: process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_ID,
                 client_secret: process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_SECRET,
                 redirect_uri: process.env.NEXT_PUBLIC_SALESFORCE_REDIRECT_URI,
-                code_verifier: codeVerifier, // Include the PKCE code verifier
+                code_verifier: codeVerifier,
             }),
             {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -47,10 +42,6 @@ export async function POST(req) {
 
         const { access_token, refresh_token, instance_url } = tokenResponse.data;
 
-        // Log the token response for debugging
-        console.log('Token Response:', { access_token, refresh_token, instance_url });
-
-        // Return tokens to the client
         return NextResponse.json({
             access_token,
             refresh_token,

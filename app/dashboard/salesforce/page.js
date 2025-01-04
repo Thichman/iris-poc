@@ -2,18 +2,19 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { saveTokensToBackend } from '../queries/salesforce/set-keys';
 
 export default function Salesforce() {
     const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [tokens, setTokens] = useState(null);
+    const [success, setSuccess] = useState(false);
 
     // Check for authorization code in the query params
     useEffect(() => {
         const code = searchParams.get('code');
 
-        if (code && !tokens) {
+        if (code && !success) {
             setLoading(true);
 
             // Send the code to the backend to exchange for tokens
@@ -32,7 +33,16 @@ export default function Salesforce() {
                     }
 
                     const data = await response.json();
-                    setTokens(data);
+
+                    console.log('Received tokens:', data);
+                    // Save the tokens to the backend
+                    await saveTokensToBackend(
+                        data.access_token,
+                        data.refresh_token,
+                        data.instance_url,
+                    );
+
+                    setSuccess(true); // Set success state
                 } catch (err) {
                     console.error('Error fetching tokens:', err);
                     setError(err.message);
@@ -43,7 +53,7 @@ export default function Salesforce() {
 
             fetchTokens();
         }
-    }, [searchParams, tokens]);
+    }, [searchParams, success]);
 
     // Render UI
     return (
@@ -54,7 +64,14 @@ export default function Salesforce() {
                 <p>Loading...</p>
             ) : error ? (
                 <div className="text-red-500">{error}</div>
-            ) : !tokens ? (
+            ) : success ? (
+                <div className="p-4 bg-white shadow-md rounded">
+                    <h2 className="text-xl font-bold mb-2 text-green-600">
+                        Successfully connected to Salesforce!
+                    </h2>
+                    <p>Your Salesforce account is now linked. You can start performing actions.</p>
+                </div>
+            ) : (
                 <button
                     onClick={() => {
                         setLoading(true);
@@ -64,13 +81,6 @@ export default function Salesforce() {
                 >
                     Connect to Salesforce
                 </button>
-            ) : (
-                <div className="p-4 bg-white shadow-md rounded">
-                    <h2 className="text-xl font-bold mb-2">Salesforce Credentials</h2>
-                    <p><strong>Access Token:</strong> {tokens.access_token}</p>
-                    <p><strong>Refresh Token:</strong> {tokens.refresh_token}</p>
-                    <p><strong>Instance URL:</strong> {tokens.instance_url}</p>
-                </div>
             )}
         </div>
     );
