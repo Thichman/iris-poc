@@ -16,12 +16,17 @@ export async function POST(req) {
 
         const { data, error } = await supabase
             .from('salesforce_credentials')
-            .insert({
-                user_id: userId,
-                access_token: accessToken,
-                refresh_token: refreshToken,
-                instance_url: instanceUrl,
-            });
+            .upsert(
+                {
+                    user_id: userId,
+                    access_token: accessToken,
+                    refresh_token: refreshToken,
+                    instance_url: instanceUrl,
+                },
+                {
+                    onConflict: 'user_id',
+                }
+            );
 
         if (error) {
             console.error('Error saving Salesforce tokens:', error);

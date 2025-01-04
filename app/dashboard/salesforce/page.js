@@ -9,15 +9,44 @@ export default function Salesforce() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [validated, setValidated] = useState(false);
 
-    // Check for authorization code in the query params
+    // Validate existing Salesforce keys on component mount
+    useEffect(() => {
+        async function validateKeys() {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/database/salesforce/check-user-keys');
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data.status)
+                    if (data.status === 'valid') {
+                        setSuccess(true);
+                        setValidated(true);
+                    } else {
+                        setValidated(false);
+                    }
+                } else {
+                    setValidated(false);
+                }
+            } catch (err) {
+                console.error('Error validating keys:', err);
+                setValidated(false);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        validateKeys();
+    }, []);
+
+    // Handle authorization code in query params
     useEffect(() => {
         const code = searchParams.get('code');
 
         if (code && !success) {
             setLoading(true);
 
-            // Send the code to the backend to exchange for tokens
             async function fetchTokens() {
                 try {
                     const response = await fetch('/api/salesforce/callback', {
@@ -35,11 +64,12 @@ export default function Salesforce() {
                     const data = await response.json();
 
                     console.log('Received tokens:', data);
+
                     // Save the tokens to the backend
                     await saveTokensToBackend(
                         data.access_token,
                         data.refresh_token,
-                        data.instance_url,
+                        data.instance_url
                     );
 
                     setSuccess(true); // Set success state
@@ -70,6 +100,13 @@ export default function Salesforce() {
                         Successfully connected to Salesforce!
                     </h2>
                     <p>Your Salesforce account is now linked. You can start performing actions.</p>
+                </div>
+            ) : validated ? (
+                <div className="p-4 bg-white shadow-md rounded">
+                    <h2 className="text-xl font-bold mb-2 text-green-600">
+                        You are already authenticated with Salesforce!
+                    </h2>
+                    <p>Your existing Salesforce credentials are valid.</p>
                 </div>
             ) : (
                 <button

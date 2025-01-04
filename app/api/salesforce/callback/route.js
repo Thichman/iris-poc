@@ -10,7 +10,6 @@ export async function POST(req) {
             console.error('Authorization code missing');
             return NextResponse.json(
                 { error: 'Authorization code is required.' },
-                { status: 400 }
             );
         }
 
