@@ -29,6 +29,6 @@ export async function POST(req) {
         return NextResponse.json({ reply });
     } catch (error) {
         console.error('Error running LangGraph agent:', error);
-        return NextResponse.json({ error: 'Error processing request.' });
+        return NextResponse.json({ reply: 'Error processing request.' });
     }
 }

@@ -1,6 +1,6 @@
 import { mainModel } from './main-agent'; // Import the defined main model
 import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
-import { mainToolsNode } from './main-tools';
+import { mainToolsNode } from './tools/main-tools';
 
 async function callMainAgent(state) {
     const { messages } = state;
@@ -12,9 +12,9 @@ async function callMainAgent(state) {
 function shouldContinue({ messages }) {
     const lastMessage = messages[messages.length - 1];
     if ('tool_calls' in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls.length > 0) {
-        return 'tools';
+        return 'tools'; // Route to tools for other tasks
     }
-    return '__end__';
+    return '__end__'; // Stop when no further action is required
 }
 
 export const mainWorkflow = new StateGraph(MessagesAnnotation)
@@ -22,5 +22,5 @@ export const mainWorkflow = new StateGraph(MessagesAnnotation)
     .addNode('tools', mainToolsNode)
     .addEdge('__start__', 'main_agent')
     .addConditionalEdges('main_agent', shouldContinue)
-    .addEdge('tools', 'main_agent')
+    .addEdge('tools', '__end__') // End after tool execution
     .compile();
