@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { saveTokensToBackend } from '../queries/salesforce/set-keys';
+import { saveTokensToBackend } from '../../ai/utils/salesforce/set-keys';
 
 export default function Salesforce() {
     const searchParams = useSearchParams();
