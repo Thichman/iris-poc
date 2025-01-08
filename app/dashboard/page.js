@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import ReactMarkdown from 'react-markdown'
 
 export default function Dashboard() {
     const [messages, setMessages] = useState([]);
@@ -45,15 +46,15 @@ export default function Dashboard() {
 
     return (
         <div className="bg-black text-white mt-24 flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-bold mb-4">Chat with LangGraph Agent</h1>
+            <h1 className="text-2xl font-bold mb-4">Chat with IRIS</h1>
             <div className="bg-white text-black rounded-lg shadow-md p-4 w-full max-w-lg h-96 overflow-y-scroll mb-4">
                 {messages.map((msg, index) => (
                     <div
                         key={index}
                         className={`mb-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}
                     >
-                        <strong>{msg.role === 'user' ? 'You' : 'Agent'}:</strong>{' '}
-                        {msg.content}
+                        <strong>{msg.role === 'user' ? 'You' : 'IRIS'}:</strong>{' '}
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
                 ))}
             </div>

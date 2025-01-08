@@ -11,16 +11,22 @@ async function callMainAgent(state) {
 
 function shouldContinue({ messages }) {
     const lastMessage = messages[messages.length - 1];
-    if ('tool_calls' in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls.length > 0) {
-        return 'tools'; // Route to tools for other tasks
+    if (lastMessage.role === 'tool') {
+        return 'main_agent';
     }
-    return '__end__'; // Stop when no further action is required
+
+    if ('tool_calls' in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls.length > 0) {
+        return 'tools';
+    }
+
+    return '__end__';
 }
+
 
 export const mainWorkflow = new StateGraph(MessagesAnnotation)
     .addNode('main_agent', callMainAgent)
     .addNode('tools', mainToolsNode)
     .addEdge('__start__', 'main_agent')
     .addConditionalEdges('main_agent', shouldContinue)
-    .addEdge('tools', '__end__') // End after tool execution
+    .addEdge('tools', 'main_agent')
     .compile();
