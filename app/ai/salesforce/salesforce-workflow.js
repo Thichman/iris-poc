@@ -2,6 +2,8 @@ import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
 import { salesforceAgentModel } from './salesforce-agent';
 import { salesforceToolsNode } from '../main/tools/salesforce/test-tools';
 
+//TODO: make this work within the main agent and flow
+
 // Function to call the Salesforce agent
 async function callSalesforceAgent(state) {
     const { messages } = state;

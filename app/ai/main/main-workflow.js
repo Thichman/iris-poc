@@ -1,4 +1,4 @@
-import { mainModel } from './main-agent'; // Import the defined main model
+import { mainModel } from './main-agent';
 import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
 import { mainToolsNode } from './tools/main-tools';
 
