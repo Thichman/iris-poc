@@ -1,16 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown';
+import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
-    // Generate a unique session ID for the user
     const sessionId = useState(uuidv4())[0];
+
+    useEffect(() => {
+        const checkSalesforceKeys = async () => {
+            try {
+                const response = await fetch('/api/salesforce/check-keys');
+                const data = await response.json();
+
+                if (!response.ok || !data.valid) {
+                    console.log('Salesforce keys are missing or invalid. Redirecting...');
+                    router.push('/dashboard/salesforce');
+                }
+            } catch (error) {
+                console.error('Error checking Salesforce keys:', error);
+                router.push('/dashboard/salesforce');
+            }
+        };
+
+        checkSalesforceKeys();
+    }, [router]);
 
     const sendMessage = async () => {
         if (!input.trim()) return;
