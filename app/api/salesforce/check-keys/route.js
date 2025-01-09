@@ -25,6 +25,8 @@ export async function GET() {
                 { status: 404 }
             );
         }
+        // TODO: Check if token is expired or the keys do not work, I should be able to do this with the callback route
+
         return new Response(
             JSON.stringify({ valid: true, message: 'Salesforce keys are valid' }),
             { status: 200 }
