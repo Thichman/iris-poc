@@ -11,17 +11,15 @@ async function callMainAgent(state) {
 
 function shouldContinue({ messages }) {
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role === 'tool') {
-        return 'main_agent';
-    }
 
+    // Route to tools if tool calls are detected
     if ('tool_calls' in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls.length > 0) {
         return 'tools';
     }
 
+    // Otherwise, end the workflow
     return '__end__';
 }
-
 
 export const mainWorkflow = new StateGraph(MessagesAnnotation)
     .addNode('main_agent', callMainAgent)
