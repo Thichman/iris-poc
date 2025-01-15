@@ -35,9 +35,25 @@ export const salesforceQueryTool = tool(
     },
     {
         name: 'salesforce_query',
-        description: 'Execute a custom SOQL query on Salesforce to fetch data. Provide a valid SOQL query string.',
+        description: `
+        Execute a custom SOQL (Salesforce Object Query Language) query on Salesforce to fetch data. 
+        This tool allows querying specific Salesforce objects and fields using SOQL syntax.
+        Example query: "SELECT Id, Name FROM Account WHERE Industry = 'Technology'".
+        Note:
+        - Ensure you provide a valid SOQL query string.
+        - The response will include the matching records.
+        - For large result sets, the tool will automatically handle pagination using the nextRecordsUrl.
+    `,
         schema: z.object({
-            query: z.string().describe('A valid SOQL query string to fetch specific data from Salesforce.'),
+            query: z
+                .string()
+                .describe(
+                    `
+                The SOQL query string to fetch data from Salesforce. 
+                Example: "SELECT Id, Name FROM Account WHERE Industry = 'Technology'".
+                Ensure the query follows Salesforce SOQL syntax and references valid objects and fields.
+                `
+                ),
         }),
     }
 );

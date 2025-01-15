@@ -34,9 +34,27 @@ export const salesforceObjectLookupTool = tool(
     },
     {
         name: 'salesforce_object_lookup',
-        description: 'Lookup Salesforce objects dynamically based on a user query.',
+        description: `
+        Dynamically search for Salesforce objects based on a user-provided query. 
+        This tool allows you to find object names within your Salesforce instance that match a specific query.
+        Example usage:
+        - Query: "account"
+        - Response: "Matched objects: account, accountteam, accountcontactrole"
+        Notes:
+        - Partial matches are supported, e.g., querying "opport" may return "opportunity" and "opportunityteam".
+        - Use this tool to discover available objects for further queries or operations.
+        - Results are case-insensitive.
+    `,
         schema: z.object({
-            query: z.string().describe('The name of the Salesforce object to look up.'),
+            query: z
+                .string()
+                .describe(
+                    `
+                A case-insensitive search term to look up Salesforce object names. 
+                Example: "account" or "opportunity".
+                The tool will return a list of matching objects or notify you if no matches are found.
+                `
+                ),
         }),
     }
 );

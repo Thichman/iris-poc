@@ -34,9 +34,28 @@ export const describeSalesforceStructure = tool(
     },
     {
         name: 'describe_salesforce_structure',
-        description: 'Retrieves and describes the structure of the Salesforce account, including objects and their fields.',
+        description: `
+        Retrieve and describe the structure of the Salesforce account, including objects and their fields.
+        This tool provides insights into the available Salesforce objects, their labels, and field details.
+        
+        Example Usage:
+        - This tool can help explore the data model of your Salesforce instance.
+        - Retrieve objects like "Account", "Contact", or "Opportunity" and view their fields such as "Name", "Email", or "Industry".
+
+        Notes:
+        - By default, it retrieves details for the first 5 objects for performance reasons.
+        - Use this tool to understand the schema and plan queries or integrations accordingly.
+    `,
         schema: z.object({
-            includeDetails: z.boolean().optional().default(false).describe('Whether to include detailed object descriptions.'),
+            includeDetails: z
+                .boolean()
+                .optional()
+                .default(false)
+                .describe(`
+                A flag indicating whether to include detailed field descriptions for each object.
+                When set to true, detailed fields with names, labels, and types will be provided.
+                Default: false.
+            `),
         }),
     }
 );
