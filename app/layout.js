@@ -38,11 +38,14 @@ export default async function RootLayout({ children }) {
                 <a href="/dashboard" className="hover:text-gray-300 text-xl font-bold">
                   Dashboard
                 </a>
-                <a href="/dashboard/settings" className="hover:text-gray-300 text-xl font-bold">
+                {/* <a href="/dashboard/settings" className="hover:text-gray-300 text-xl font-bold">
                   Settings
-                </a>
+                </a> */}
                 <a href="/dashboard/salesforce" className="hover:text-gray-300 text-xl font-bold">
                   Salesforce Auth
+                </a>
+                <a href="/dashboard/documentation" className="hover:text-gray-300 text-xl font-bold">
+                  Documentation
                 </a>
               </nav>
             }

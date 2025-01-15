@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/navigation';
@@ -10,6 +10,8 @@ export default function Dashboard() {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const textareaRef = useRef(null);
+    const messageContainerRef = useRef(null);
 
     const sessionId = useState(uuidv4())[0];
 
@@ -64,32 +66,73 @@ export default function Dashboard() {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    };
+
+    const adjustTextareaHeight = () => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+    };
+
+    useEffect(() => {
+        adjustTextareaHeight();
+    }, [input]);
+
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTo({
+                top: messageContainerRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    }, [messages]);
+
     return (
         <div className="bg-black text-white mt-24 flex flex-col items-center justify-center">
             <h1 className="text-2xl font-bold mb-4">Chat with IRIS</h1>
-            <div className="bg-white text-black rounded-lg shadow-md p-4 w-full max-w-lg h-96 overflow-y-scroll mb-4">
+            <div
+                ref={messageContainerRef}
+                className="bg-white text-black rounded-lg shadow-md p-4 w-full max-w-3xl h-96 overflow-y-auto mb-4"
+            >
                 {messages.map((msg, index) => (
                     <div
                         key={index}
-                        className={`mb-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}
+                        className={`mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                        <strong>{msg.role === 'user' ? 'You' : 'IRIS'}:</strong>{' '}
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <div
+                            className={`inline-block px-3 py-2 rounded-lg ${msg.role === 'user'
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-200 text-black'
+                                }`}
+                        >
+                            <strong className="block">{msg.role === 'user' ? 'You' : 'IRIS'}:</strong>
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        </div>
                     </div>
                 ))}
             </div>
-            <div className="flex gap-2 w-full max-w-lg">
-                <input
-                    type="text"
+            <div className="flex gap-2 w-full max-w-3xl items-start">
+                <textarea
+                    ref={textareaRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onInput={adjustTextareaHeight}
+                    onKeyDown={handleKeyDown}
                     placeholder="Type your message..."
-                    className="flex-1 p-2 rounded-md border border-gray-300 text-black"
+                    className="flex-1 p-2 rounded-md border border-gray-300 text-black resize-none overflow-hidden"
+                    rows={1}
                 />
                 <button
                     onClick={sendMessage}
                     disabled={loading}
-                    className={`p-2 rounded-md ${loading
+                    className={`p-2 rounded-md h-10 flex items-center justify-center ${loading
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                         } text-white`}
