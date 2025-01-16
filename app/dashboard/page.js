@@ -113,7 +113,22 @@ export default function Dashboard() {
                                 }`}
                         >
                             <strong className="block">{msg.role === 'user' ? 'You' : 'IRIS'}:</strong>
-                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                            <ReactMarkdown
+                                components={{
+                                    a: ({ node, ...props }) => (
+                                        <a
+                                            {...props}
+                                            className="text-blue-500 hover:underline"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {props.children}
+                                        </a>
+                                    ),
+                                }}
+                            >
+                                {msg.content}
+                            </ReactMarkdown>
                         </div>
                     </div>
                 ))}
