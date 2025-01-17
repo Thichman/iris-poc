@@ -45,7 +45,7 @@ export default async function RootLayout({ children }) {
                   Salesforce Auth
                 </a>
                 <a href="/dashboard/documentation" className="hover:text-gray-300 text-xl font-bold">
-                  Documentation
+                  How To
                 </a>
               </nav>
             }

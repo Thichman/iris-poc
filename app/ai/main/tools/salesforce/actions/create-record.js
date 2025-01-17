@@ -39,11 +39,11 @@ export const salesforceCreateTool = tool(
         schema: z.object({
             objectName: z
                 .string()
-                .describe('The name of the Salesforce object where the record should be created. Example: "Contact".'),
+                .describe('The name of the Salesforce object where the record should be created.'),
             data: z
                 .record(z.string())
                 .describe(
-                    'A key-value pair object where the keys are field names in the Salesforce object, and the values are the data to insert. Example: { "FirstName": "John", "LastName": "Doe" }.'
+                    'A key-value pair object where the keys are field names in the Salesforce object, and the values are the data to insert.'
                 ),
         }),
     }

@@ -20,8 +20,6 @@ export const dynamicSalesforceQueryTool = tool(
                 queryString += ` WHERE ${paramConditions}`;
             }
 
-            console.log('Executing Salesforce query:', queryString);
-
             let records = [];
             let nextUrl = `/services/data/v57.0/query?q=${encodeURIComponent(queryString)}`;
 

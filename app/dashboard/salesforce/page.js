@@ -19,7 +19,6 @@ export default function Salesforce() {
                 const response = await fetch('/api/database/salesforce/check-user-keys');
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data.status)
                     if (data.status === 'valid') {
                         setSuccess(true);
                         setValidated(true);
@@ -62,8 +61,6 @@ export default function Salesforce() {
                     }
 
                     const data = await response.json();
-
-                    console.log('Received tokens:', data);
 
                     // Save the tokens to the backend
                     await saveTokensToBackend(

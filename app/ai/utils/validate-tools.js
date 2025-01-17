@@ -5,5 +5,4 @@ export function validateTool(tool) {
     if (!tool.func) {
         throw new Error(`Tool "${tool.name}" is missing a function implementation.`);
     }
-    console.log(`Tool "${tool.name}" validated successfully.`);
 }

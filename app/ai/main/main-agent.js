@@ -14,8 +14,5 @@ export const mainModel = new ChatOpenAI({
     2. Clearly explain your actions and what data you are using.
     3. Only ask for clarification if the user’s instructions are ambiguous or incomplete.
     4. If a tool fails, provide a helpful error message and suggest potential next steps.
-    
-    Available tools:
-    ${toolsArray.map(tool => `- ${tool.name}: ${tool.description}`).join('\n')}
 `,
 }).bindTools(toolsArray);

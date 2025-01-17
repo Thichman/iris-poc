@@ -19,9 +19,7 @@ export const salesforceDeleteTool = tool(
             }
         } catch (error) {
             console.error('Error deleting Salesforce record:', error.message);
-            throw new Error(
-                `Failed to delete record with ID "${input.recordId}" from the "${input.objectName}" object. Please verify the object name, record ID, and permissions.`
-            );
+            return `Failed to delete record with ID "${input.recordId}" from the "${input.objectName}" object. Please verify the object name, record ID, and permissions.`
         }
     },
     {

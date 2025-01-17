@@ -29,7 +29,7 @@ export const describeSalesforceStructure = tool(
             };
         } catch (error) {
             console.error('Error describing Salesforce structure:', error);
-            return { error: 'Failed to retrieve Salesforce structure.' };
+            return 'Failed to retrieve Salesforce structure.'
         }
     },
     {

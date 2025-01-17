@@ -4,7 +4,6 @@ import { createSalesforceClient } from '@/app/ai/utils/salesforce/get-axios-inst
 
 export const salesforceQueryTool = tool(
     async (input) => {
-        console.log('called salesforce query', input)
         try {
             const client = await createSalesforceClient();
             const { query } = input;
