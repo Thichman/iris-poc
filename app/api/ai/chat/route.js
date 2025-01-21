@@ -21,7 +21,6 @@ export async function POST(req) {
         const response = await mainWorkflow.invoke({
             messages: sessionMemory[sessionId],
         });
-        console.log('Workflow Response:', response);
 
         sessionMemory[sessionId].push(response.messages[response.messages.length - 1]);
 

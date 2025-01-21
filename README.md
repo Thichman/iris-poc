@@ -135,3 +135,4 @@ Backend API routes for authentication and data interaction:
 - Add more Salesforce-specific tools (e.g., bulk data operations).
 - Extend AI capabilities for other integrations beyond Salesforce.
 - Improve dashboard UI/UX for streamlined workflows.
+- Import a testing library like jest or vitest.

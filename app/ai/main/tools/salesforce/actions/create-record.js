@@ -34,7 +34,7 @@ export const salesforceCreateTool = tool(
         name: 'salesforce_create',
         description: `
             Create a new record in a specific Salesforce object. Provide the object name and the necessary field data 
-            to create the record. Ensure the user has the appropriate permissions for the action.
+            to create the record.
         `,
         schema: z.object({
             objectName: z

@@ -20,14 +20,11 @@ export default function Dashboard() {
             try {
                 const response = await fetch('/api/salesforce/check-keys');
                 const data = await response.json();
-
                 if (!response.ok || !data.valid) {
-                    console.log('Salesforce keys are missing or invalid. Redirecting...');
-                    router.push('/dashboard/salesforce');
+                    router.push('/dashboard/authenticate');
                 }
             } catch (error) {
-                console.error('Error checking Salesforce keys:', error);
-                router.push('/dashboard/salesforce');
+                router.push('/dashboard/authenticate');
             }
         };
 

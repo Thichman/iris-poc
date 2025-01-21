@@ -21,8 +21,8 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const supabase = await createClient()
-
   const { data } = await supabase.auth.getUser()
+
   return (
     <html lang="en">
       <body
@@ -41,8 +41,8 @@ export default async function RootLayout({ children }) {
                 {/* <a href="/dashboard/settings" className="hover:text-gray-300 text-xl font-bold">
                   Settings
                 </a> */}
-                <a href="/dashboard/salesforce" className="hover:text-gray-300 text-xl font-bold">
-                  Salesforce Auth
+                <a href="/dashboard/authenticate" className="hover:text-gray-300 text-xl font-bold">
+                  Authenticate
                 </a>
                 <a href="/dashboard/documentation" className="hover:text-gray-300 text-xl font-bold">
                   How To

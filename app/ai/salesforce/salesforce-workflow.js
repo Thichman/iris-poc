@@ -7,7 +7,6 @@ import { salesforceToolsNode } from '../main/tools/salesforce/test-tools';
 // Function to call the Salesforce agent
 async function callSalesforceAgent(state) {
     const { messages } = state;
-    console.log(messages)
     const response = await salesforceAgentModel.invoke(messages);
     return { messages: response };
 }

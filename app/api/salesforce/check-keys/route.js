@@ -9,7 +9,6 @@ export async function GET() {
         if (!userId) {
             return new Response(
                 JSON.stringify({ valid: false, message: 'User not authenticated' }),
-                { status: 401 }
             );
         }
 
@@ -22,7 +21,6 @@ export async function GET() {
         if (error || !data || !data.access_token) {
             return new Response(
                 JSON.stringify({ valid: false, message: 'No valid Salesforce keys found' }),
-                { status: 404 }
             );
         }
         // TODO: Check if token is expired or the keys do not work, I should be able to do this with the callback route

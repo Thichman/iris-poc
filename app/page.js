@@ -1,14 +1,13 @@
 export default function Home() {
   return (
     <div className="p-6">
-      {/* Hero Section */}
       <section className="hero bg-gradient-to-br from-blue-500 to-purple-600 text-white text-center py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-4">
             Revolutionize Your Workflow with AI Automation
           </h1>
           <p className="text-lg mb-6">
-            Let Iris handle the tedious tasks, so you can focus on what truly matters: growing your business and closing deals.
+            Let Iris handle the tedious tasks, so you can focus on what truly matters.
           </p>
           <a
             href="/sign-up"
@@ -19,7 +18,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="features py-16 bg-gray-100 text-black text-center">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-8">Why Choose Iris?</h2>
@@ -43,7 +41,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Automation Mission Section */}
       <section className="mission py-16 bg-white text-black text-center">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
@@ -54,8 +51,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="testimonials py-16 bg-gray-100 text-black text-center">
+      {/* <section className="testimonials py-16 bg-gray-100 text-black text-center">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-8">What Professionals Are Saying</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -73,7 +69,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
