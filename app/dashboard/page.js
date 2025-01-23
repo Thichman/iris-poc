@@ -12,7 +12,7 @@ export default function Dashboard() {
     const router = useRouter();
     const textareaRef = useRef(null);
     const messageContainerRef = useRef(null);
-
+    const [checkingKeys, setCheckingKeys] = useState(true);
     const sessionId = useState(uuidv4())[0];
 
     useEffect(() => {
@@ -23,6 +23,7 @@ export default function Dashboard() {
                 if (!response.ok || !data.valid) {
                     router.push('/dashboard/authenticate');
                 }
+                setCheckingKeys(false);
             } catch (error) {
                 router.push('/dashboard/authenticate');
             }
@@ -93,65 +94,73 @@ export default function Dashboard() {
 
     return (
         <div className="bg-black text-white mt-24 flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-bold mb-4">Chat with IRIS</h1>
-            <div
-                ref={messageContainerRef}
-                className="bg-white text-black rounded-lg shadow-md p-4 w-full max-w-3xl h-96 overflow-y-auto mb-4"
-            >
-                {messages.map((msg, index) => (
+            {checkingKeys ? (
+                <div>
+                    <h1 className="text-2xl font-bold mb-4 justify-center items-center">Checking Youre Salesforce Connection</h1>
+                </div>
+            ) : (
+                <>
+                    <h1 className="text-2xl font-bold mb-4">Chat with IRIS</h1>
                     <div
-                        key={index}
-                        className={`mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        ref={messageContainerRef}
+                        className="bg-white text-black rounded-lg shadow-md p-4 w-full max-w-3xl h-96 overflow-y-auto mb-4"
                     >
-                        <div
-                            className={`inline-block px-3 py-2 rounded-lg ${msg.role === 'user'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-gray-200 text-black'
-                                }`}
-                        >
-                            <strong className="block">{msg.role === 'user' ? 'You' : 'IRIS'}:</strong>
-                            <ReactMarkdown
-                                components={{
-                                    a: ({ node, ...props }) => (
-                                        <a
-                                            {...props}
-                                            className="text-blue-500 hover:underline"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {props.children}
-                                        </a>
-                                    ),
-                                }}
+                        {messages.map((msg, index) => (
+                            <div
+                                key={index}
+                                className={`mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                             >
-                                {msg.content}
-                            </ReactMarkdown>
-                        </div>
+                                <div
+                                    className={`inline-block px-3 py-2 rounded-lg ${msg.role === 'user'
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-gray-200 text-black'
+                                        }`}
+                                >
+                                    <strong className="block">{msg.role === 'user' ? 'You' : 'IRIS'}:</strong>
+                                    <ReactMarkdown
+                                        components={{
+                                            a: ({ node, ...props }) => (
+                                                <a
+                                                    {...props}
+                                                    className="text-blue-500 hover:underline"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    {props.children}
+                                                </a>
+                                            ),
+                                        }}
+                                    >
+                                        {msg.content}
+                                    </ReactMarkdown>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
-            <div className="flex gap-2 w-full max-w-3xl items-start">
-                <textarea
-                    ref={textareaRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onInput={adjustTextareaHeight}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type your message..."
-                    className="flex-1 p-2 rounded-md border border-gray-300 text-black resize-none overflow-hidden"
-                    rows={1}
-                />
-                <button
-                    onClick={sendMessage}
-                    disabled={loading}
-                    className={`p-2 rounded-md h-10 flex items-center justify-center ${loading
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
-                        } text-white`}
-                >
-                    {loading ? 'Sending...' : 'Send'}
-                </button>
-            </div>
-        </div>
+                    <div className="flex gap-2 w-full max-w-3xl items-start">
+                        <textarea
+                            ref={textareaRef}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onInput={adjustTextareaHeight}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Type your message..."
+                            className="flex-1 p-2 rounded-md border border-gray-300 text-black resize-none overflow-hidden"
+                            rows={1}
+                        />
+                        <button
+                            onClick={sendMessage}
+                            disabled={loading}
+                            className={`p-2 rounded-md h-10 flex items-center justify-center ${loading
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
+                                } text-white`}
+                        >
+                            {loading ? 'Sending...' : 'Send'}
+                        </button>
+                    </div>
+                </>
+            )}
+        </div >
     );
 }

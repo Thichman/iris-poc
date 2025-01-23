@@ -29,6 +29,6 @@ export async function POST(req) {
         return NextResponse.json({ reply });
     } catch (error) {
         console.error('Error running LangGraph agent:', error);
-        return NextResponse.json({ reply: 'Error processing request.' });
+        return NextResponse.json({ reply: 'There has been an issue on our end please try again with another request. Sometimes our model has trouble with multi step tasks. If this is the case then break them down into sub tasks and try again!' });
     }
 }
