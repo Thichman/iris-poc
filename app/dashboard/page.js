@@ -96,7 +96,7 @@ export default function Dashboard() {
         <div className="bg-black text-white mt-24 flex flex-col items-center justify-center">
             {checkingKeys ? (
                 <div>
-                    <h1 className="text-2xl font-bold mb-4 justify-center items-center">Checking Youre Salesforce Connection</h1>
+                    <h1 className="text-2xl font-bold mb-4 justify-center items-center">Checking Your Salesforce Connection</h1>
                 </div>
             ) : (
                 <>
