@@ -33,7 +33,7 @@ export default async function Login(props) {
             <div message={searchParams} />
           </div>
           <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link className="font-medium text-primary-600 hover:underline dark:text-primary-500 hover:cursor-pointer" href="/sign-up">
               Sign up
             </Link>

@@ -18,7 +18,8 @@ export async function GET() {
         return NextResponse.json({ error: 'PKCE generation failed' }, { status: 500 });
     }
 
-    const authUrl = `${process.env.NEXT_PUBLIC_SALESFORCE_AUTH_URL}?response_type=code&client_id=${process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_SALESFORCE_REDIRECT_URI)}&scope=api refresh_token&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+    console.log(process.env.SALESFORCE_AUTH_URL)
+    const authUrl = `${process.env.SALESFORCE_AUTH_URL}?response_type=code&client_id=${process.env.SALESFORCE_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.SALESFORCE_REDIRECT_URI)}&scope=api refresh_token&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 
     const response = NextResponse.redirect(authUrl);
     response.cookies.set('pkce_verifier', codeVerifier, {

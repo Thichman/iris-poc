@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import AuthButton from "@/components/header";
 import { createClient } from '@/utils/supabase/server'
+import Link from "next/link";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,22 +32,22 @@ export default async function RootLayout({ children }) {
         <div>
           <header className="flex items-center justify-between border-b border-b-foreground/10 mb-5 h-24 px-6">
             <div className="text-2xl font-bold">
-              <a href="/">IRIS</a>
+              <Link href="/">IRIS</Link>
             </div>
             {data.user &&
               < nav className="flex space-x-8">
-                <a href="/dashboard" className="hover:text-gray-300 text-xl font-bold">
+                <Link href="/dashboard" className="hover:text-gray-300 text-xl font-bold">
                   Dashboard
-                </a>
+                </Link>
                 {/* <a href="/dashboard/settings" className="hover:text-gray-300 text-xl font-bold">
                   Settings
                 </a> */}
-                <a href="/dashboard/authenticate" className="hover:text-gray-300 text-xl font-bold">
+                <Link href="/dashboard/authenticate" className="hover:text-gray-300 text-xl font-bold">
                   Authenticate
-                </a>
-                <a href="/dashboard/documentation" className="hover:text-gray-300 text-xl font-bold">
+                </Link>
+                <Link href="/dashboard/documentation" className="hover:text-gray-300 text-xl font-bold">
                   How To
-                </a>
+                </Link>
               </nav>
             }
             <AuthButton />

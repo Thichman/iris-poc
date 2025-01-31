@@ -66,10 +66,10 @@ export async function createSalesforceClient() {
  * @returns {Promise<Object>} - New access token and related data.
  */
 async function refreshSalesforceToken(refreshToken) {
-    const response = await axios.post(process.env.NEXT_PUBLIC_SALESFORCE_TOKEN_URL, {
+    const response = await axios.post(process.env.SALESFORCE_TOKEN_URL, {
         grant_type: 'refresh_token',
-        client_id: process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_ID,
-        client_secret: process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_SECRET,
+        client_id: process.env.SALESFORCE_CLIENT_ID,
+        client_secret: process.env.SALESFORCE_CLIENT_SECRET,
         refresh_token: refreshToken,
     });
 

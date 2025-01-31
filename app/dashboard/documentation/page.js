@@ -8,7 +8,7 @@ export default function GuidePage() {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4">Start with Clear Requests</h2>
                     <p className="text-gray-700">
-                        When interacting with IRIS, it’s important to be specific and concise. IRIS is designed to process detailed requests efficiently. Start your conversation with a clear intent, such as:
+                        When interacting with IRIS, it&apos;s important to be specific and concise. IRIS is designed to process detailed requests efficiently. Start your conversation with a clear intent, such as:
                     </p>
                     <ul className="list-disc pl-6 mt-3 space-y-2 text-gray-700">
                         <li>Instead of saying, <em>“Show me something about contacts,”</em> try: <strong>“Find all contacts created last month.”</strong></li>
@@ -80,7 +80,7 @@ export default function GuidePage() {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4">Ask for Help</h2>
                     <p className="text-gray-700">
-                        If you're unsure about how to phrase a request, ask IRIS directly! For example:
+                        If you&apos;re unsure about how to phrase a request, ask IRIS directly! For example:
                     </p>
                     <ul className="list-disc pl-6 mt-3 space-y-2 text-gray-700">
                         <li>

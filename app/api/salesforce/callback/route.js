@@ -25,13 +25,13 @@ export async function POST(req) {
         }
 
         const tokenResponse = await axios.post(
-            process.env.NEXT_PUBLIC_SALESFORCE_TOKEN_URL,
+            process.env.SALESFORCE_TOKEN_URL,
             new URLSearchParams({
                 grant_type: 'authorization_code',
                 code,
-                client_id: process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_ID,
-                client_secret: process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_SECRET,
-                redirect_uri: process.env.NEXT_PUBLIC_SALESFORCE_REDIRECT_URI,
+                client_id: process.env.SALESFORCE_CLIENT_ID,
+                client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+                redirect_uri: process.env.SALESFORCE_REDIRECT_URI,
                 code_verifier: codeVerifier,
             }),
             {

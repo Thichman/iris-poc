@@ -121,8 +121,7 @@ Backend API routes for authentication and data interaction:
 ## **Troubleshooting**
 1. **Salesforce OAuth Issues:**
    - Ensure correct redirect URI is set in Salesforce Connected App.
-   - Verify environment variables (`NEXT_PUBLIC_SALESFORCE_*`).
-
+   
 2. **AI Model Errors:**
    - Check LangChain `StateGraph` setup in workflows.
 
