@@ -3,6 +3,7 @@ import "./globals.css";
 import AuthButton from "@/components/header";
 import { createClient } from '@/utils/supabase/server'
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/react"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,6 +27,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en">
+      <Analytics />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased p-6 bg-black text-white`}
       >

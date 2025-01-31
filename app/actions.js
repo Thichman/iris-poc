@@ -8,6 +8,12 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData) => {
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
+    const passcode = formData.get("passcode")?.toString();
+
+    if (passcode !== process.env.COMPANY_KEY) {
+        return encodedRedirect("error", "/sign-up", "Invalid Passcode");
+    }
+
     const supabase = await createClient();
     const origin = (await headers()).get("origin");
 
