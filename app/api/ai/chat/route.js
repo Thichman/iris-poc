@@ -28,7 +28,15 @@ export async function POST(req) {
 
         chatHistory.push(new HumanMessage(query));
 
-        const response = await mainWorkflow.invoke({ messages: chatHistory });
+        let response;
+        try {
+            response = await mainWorkflow.invoke({ messages: chatHistory });
+        } catch (workflowError) {
+            console.error("LangGraph Error:", workflowError);
+            return NextResponse.json({
+                reply: "An internal error occurred while processing your request. Please try again."
+            });
+        }
 
         chatHistory.push(response.messages[response.messages.length - 1]);
 

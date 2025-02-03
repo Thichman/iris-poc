@@ -4,37 +4,87 @@ import { createSalesforceClient } from '@/app/ai/utils/salesforce/get-axios-inst
 
 export const salesforceObjectLinkTool = tool(
     async (input) => {
-        try {
-            const client = await createSalesforceClient();
-            const { objectName } = input;
+        const { objectName } = input;
 
-            // Fetch available objects from Salesforce
-            const response = await client.get('/services/data/v57.0/sobjects');
-            const objects = response.data.sobjects;
-
-            // Find the object in the list of objects
-            const matchedObject = objects.find(obj => obj.name.toLowerCase() === objectName.toLowerCase());
-
-            if (matchedObject) {
-                // Construct the link to the Salesforce object
-                const instanceUrl = client.defaults.baseURL.replace('/services/data/v57.0', '');
-                const objectLink = `${instanceUrl}/lightning/o/${matchedObject.name}/list`;
-
-                return {
-                    message: `Object "${objectName}" found successfully.`,
-                    link: objectLink,
-                };
-            } else {
-                return {
-                    error: `No object found matching "${objectName}". Please ensure the name is correct.`,
-                };
-            }
-        } catch (error) {
-            console.error('Error finding Salesforce object link:', error.message);
-            return {
-                error: `Failed to retrieve the object link. Please check the object name and permissions.`,
-            };
+        // Validate input
+        if (!objectName || typeof objectName !== 'string' || objectName.trim() === '') {
+            return { error: 'Invalid input: "objectName" must be a non-empty string matching a Salesforce object.' };
         }
+
+        const client = await createSalesforceClient();
+        const maxRetries = 3;
+        let attempts = 0;
+
+        while (attempts < maxRetries) {
+            try {
+                console.log(`Fetching Salesforce object link for: "${objectName}" (Attempt ${attempts + 1})`);
+
+                // Fetch available Salesforce objects
+                const response = await client.get('/services/data/v57.0/sobjects');
+                if (!response || !response.data || !response.data.sobjects) {
+                    throw new Error('Unexpected empty response from Salesforce API.');
+                }
+
+                const objects = response.data.sobjects;
+
+                // Find the requested object in the list
+                const matchedObject = objects.find(obj => obj.name.toLowerCase() === objectName.toLowerCase());
+
+                if (matchedObject) {
+                    // Extract the Salesforce instance URL
+                    const instanceUrl = client.defaults.baseURL.replace('/services/data/v57.0', '');
+                    const objectLink = `${instanceUrl}/lightning/o/${matchedObject.name}/list`;
+
+                    return {
+                        message: `Object "${objectName}" found successfully.`,
+                        link: objectLink,
+                    };
+                } else {
+                    return {
+                        error: `No object found matching "${objectName}". Please ensure the name is correct.`,
+                    };
+                }
+            } catch (error) {
+                attempts++;
+
+                if (error.response) {
+                    const statusCode = error.response.status;
+                    const apiError = error.response.data[0]?.message || error.response.data.message || 'Unknown API error';
+
+                    console.error(`Salesforce API Error (${statusCode}): ${apiError}`);
+
+                    // Handle common errors
+                    if (statusCode === 401 || statusCode === 403) {
+                        return { error: 'Unauthorized access: Check your API credentials or permissions.' };
+                    }
+                    if (statusCode === 404) {
+                        return { error: `Object "${objectName}" not found in Salesforce.` };
+                    }
+
+                    if (attempts >= maxRetries) {
+                        return { error: `Salesforce API Error: ${apiError}. Failed after ${maxRetries} attempts.` };
+                    }
+                } else {
+                    console.error(`Unexpected error retrieving object link: ${error.message}`);
+                }
+
+                if (attempts < maxRetries) {
+                    console.log(`Retrying... (Attempt ${attempts + 1})`);
+                    await new Promise(res => setTimeout(res, 2000)); // Wait before retrying
+                }
+            }
+        }
+
+        return {
+            error: `
+                Unable to find a Salesforce object link for "${objectName}". Possible reasons:
+                - The object name is incorrect (case-sensitive).
+                - Your API credentials lack the necessary permissions.
+                - A Salesforce API issue occurred.
+
+                Please verify the object name and your permissions, then try again.
+            `,
+        };
     },
     {
         name: 'salesforce_object_link',

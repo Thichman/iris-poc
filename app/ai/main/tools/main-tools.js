@@ -13,6 +13,8 @@ import { salesforceUpdateTool } from './salesforce/actions/update-records';
 import { salesforceDeleteTool } from './salesforce/actions/delete-record';
 import { salesforceCustomApexTool } from './salesforce/actions/custom-apex';
 import { salesforceCreateTool } from './salesforce/actions/create-record';
+import { salesforceMetadataTool } from './salesforce/actions/salesforce-metadata-tool';
+import { webSearchTool } from './salesforce/actions/search-internet';
 
 export const mainToolsNode = new ToolNode([
     describeSalesforceStructure,
@@ -25,6 +27,8 @@ export const mainToolsNode = new ToolNode([
     salesforceDeleteTool,
     salesforceCreateTool,
     salesforceCustomApexTool,
+    salesforceMetadataTool,
+    webSearchTool,
 ]);
 
 export const toolsArray = [
@@ -38,4 +42,6 @@ export const toolsArray = [
     salesforceDeleteTool,
     salesforceCreateTool,
     salesforceCustomApexTool,
+    salesforceMetadataTool,
+    webSearchTool,
 ];
