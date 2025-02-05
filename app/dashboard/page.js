@@ -129,7 +129,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    <h1 className="text-2xl font-bold mb-4">Chat with IRIS</h1>
+                    <h1 className="text-2xl font-bold mb-4">Chat with IRIS {isVoiceEnabled ? '(BETA)' : ''}</h1>
                     {isVoiceEnabled ? (
                         <VoiceInteraction
                             isVoiceEnabled={isVoiceEnabled}
@@ -151,8 +151,8 @@ export default function Dashboard() {
                                     >
                                         <div
                                             className={`inline-block px-3 py-2 rounded-lg ${msg.role === 'user'
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'bg-gray-200 text-black'
+                                                ? 'bg-blue-500 text-white'
+                                                : 'bg-gray-200 text-black'
                                                 }`}
                                         >
                                             <strong className="block">
@@ -193,8 +193,8 @@ export default function Dashboard() {
                                     onClick={sendMessage}
                                     disabled={loading}
                                     className={`p-2 rounded-md h-10 flex items-center justify-center ${loading
-                                            ? 'bg-gray-400 cursor-not-allowed'
-                                            : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
+                                        ? 'bg-gray-400 cursor-not-allowed'
+                                        : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                                         } text-white`}
                                 >
                                     {loading ? 'Sending...' : 'Send'}
