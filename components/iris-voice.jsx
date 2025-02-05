@@ -1,83 +1,116 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-export default function VoiceInteraction({ isVoiceEnabled, sendMessage, sessionId, setMessages }) {
-    const [status, setStatus] = useState('idle'); // Possible states: 'idle', 'listening', 'thinking', 'talking'
-    const [transcript, setTranscript] = useState('');
-    const [recognition, setRecognition] = useState(null);
+export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages, setMessages }) {
+    const recognitionRef = useRef(null);
+    const isRecognitionActiveRef = useRef(false);
+    const [interactionState, setInteractionState] = useState("idle"); // "idle", "listening", "thinking", "talking"
 
+    // Initialize speech recognition on mount.
     useEffect(() => {
-        if (!isVoiceEnabled) return;
         if (!('webkitSpeechRecognition' in window)) {
             console.error("Speech recognition not supported in this browser.");
             return;
         }
 
-        const recognitionInstance = new window.webkitSpeechRecognition();
-        recognitionInstance.continuous = true;
-        recognitionInstance.interimResults = false;
-        recognitionInstance.lang = "en-US";
+        const recognition = new window.webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
 
-        recognitionInstance.onstart = () => setStatus('listening');
-        recognitionInstance.onresult = (event) => {
-            const lastResult = event.results[event.results.length - 1][0].transcript;
-            setTranscript(lastResult);
-            setStatus('thinking');
-            recognitionInstance.stop(); // Stop listening while AI is processing
-            handleAIResponse(lastResult);
+        recognition.onstart = () => {
+            console.log("🎤 Listening...");
+            isRecognitionActiveRef.current = true;
         };
 
-        recognitionInstance.onerror = () => setStatus('idle');
-        recognitionInstance.onend = () => {
-            if (status !== 'thinking' && status !== 'talking') {
-                setStatus('idle'); // Return to idle only if not processing
+        recognition.onresult = async (event) => {
+            const lastResult = event.results[event.results.length - 1][0].transcript;
+            console.log("🗣️ Recognized:", lastResult);
+            isRecognitionActiveRef.current = false;
+            recognition.stop();
+            // Transition to thinking state while waiting for AI response.
+            setInteractionState("thinking");
+            await handleAIResponse(lastResult);
+        };
+
+        recognition.onerror = (event) => {
+            console.error("🚨 Speech Recognition Error:", event.error);
+            if (event.error === 'no-speech') {
+                console.log("No speech detected.");
+            }
+            isRecognitionActiveRef.current = false;
+            setInteractionState("idle");
+        };
+
+        recognition.onend = () => {
+            console.log("🔇 Speech Recognition Stopped");
+            isRecognitionActiveRef.current = false;
+            // Do not auto-restart; wait for user click.
+        };
+
+        recognitionRef.current = recognition;
+
+        return () => {
+            console.log("🛑 Cleanup: Stopping Recognition");
+            if (recognitionRef.current) {
+                recognitionRef.current.abort();
+                isRecognitionActiveRef.current = false;
             }
         };
+    }, []);
 
-        setRecognition(recognitionInstance);
-        return () => recognitionInstance.stop();
+    // Stop recognition if voice chat is disabled.
+    useEffect(() => {
+        if (!isVoiceEnabled && recognitionRef.current) {
+            console.log("🚫 Voice Chat Disabled. Stopping recognition.");
+            recognitionRef.current.stop();
+            isRecognitionActiveRef.current = false;
+            setInteractionState("idle");
+        }
     }, [isVoiceEnabled]);
 
-    // Handle AI Response
-    const handleAIResponse = async (input) => {
-        try {
-            const userMessage = { role: 'user', content: input };
-            setMessages((prev) => [...prev, userMessage]);
-
-            const response = await sendMessage(input); // Send input to AI
-            const aiReply = response.reply;
-
-            setMessages((prev) => [...prev, { role: 'agent', content: aiReply }]);
-            setStatus('talking');
-
-            speak(aiReply);
-        } catch (error) {
-            console.error("Error handling AI response:", error);
-            setStatus('idle');
+    // Start listening when the user clicks on the component.
+    const startListening = () => {
+        if (isVoiceEnabled && recognitionRef.current && !isRecognitionActiveRef.current) {
+            console.log("Starting speech recognition...");
+            isRecognitionActiveRef.current = true;
+            setInteractionState("listening");
+            recognitionRef.current.start();
         }
     };
 
-    // 🗣️ Text-to-Speech
+    const handleAIResponse = async (input) => {
+        try {
+            // Let sendMessage handle appending the user message if needed.
+            const response = await sendMessage(input);
+            if (!response || !response.reply) {
+                console.error("❌ Invalid AI Response:", response);
+                setInteractionState("idle");
+                return;
+            }
+            // Transition to talking state and speak the AI reply.
+            setInteractionState("talking");
+            speak(response.reply);
+        } catch (error) {
+            console.error("❌ Error handling AI response:", error);
+            setInteractionState("idle");
+        }
+    };
+
     const speak = (text) => {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.onend = () => {
-            setStatus('idle');
-            if (recognition) recognition.start(); // Restart listening after talking
+            // When speech ends, return to idle.
+            setInteractionState("idle");
         };
         window.speechSynthesis.speak(utterance);
     };
 
-    useEffect(() => {
-        if (isVoiceEnabled && status === 'idle' && recognition) {
-            recognition.start();
-        }
-    }, [status, isVoiceEnabled, recognition]);
-
-    // 🎨 Animations for Different Phases
+    // Define animation variants for the different interaction states.
     const waveVariants = {
-        idle: { scale: 1, opacity: 0.3 },
+        idle: { scale: 1, opacity: 0.5 },
         listening: { scale: 1.2, opacity: 1 },
         thinking: { scale: 1.3, opacity: 0.8, transition: { yoyo: Infinity, duration: 1.5 } },
         talking: { scale: 1.4, opacity: 1, transition: { yoyo: Infinity, duration: 0.7 } }
@@ -85,13 +118,12 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, sessionI
 
     return (
         <div className="flex flex-col items-center justify-center h-full w-full pt-40">
-            {/* Outer Animated Waves */}
             <motion.div
-                className="relative flex items-center justify-center w-80 h-80 rounded-full shadow-2xl border-8 border-blue-500 bg-transparent"
-                animate={status}
+                className="relative flex items-center justify-center w-80 h-80 rounded-full shadow-2xl border-8 border-blue-500 bg-transparent cursor-pointer"
+                animate={interactionState}
                 variants={waveVariants}
+                onClick={startListening}
             >
-                {/* Internal Animated Waves (Moving Inside the Hollow Circle) */}
                 <motion.div
                     className="absolute w-64 h-64 border-4 border-blue-400 rounded-full"
                     animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }}
@@ -107,12 +139,12 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, sessionI
                     animate={{ scale: [1, 1.4, 1], opacity: [0.7, 0.4, 0.7] }}
                     transition={{ duration: 2, repeat: Infinity, delay: 1 }}
                 />
+                <motion.div
+                    className="absolute w-48 h-48 border-4 border-blue-200 rounded-full"
+                    animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.7, 0.4, 0.7] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                />
             </motion.div>
-
-            {/* Display "Thinking..." when in processing mode */}
-            {status === 'thinking' && (
-                <p className="mt-6 text-white text-lg font-medium animate-pulse">Thinking...</p>
-            )}
         </div>
     );
 }

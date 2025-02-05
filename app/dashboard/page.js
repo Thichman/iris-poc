@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/navigation';
-import VoiceChat from '@/components/iris-voice';
+import VoiceInteraction from '@/components/iris-voice';
 
 export default function Dashboard() {
     const [messages, setMessages] = useState([]);
@@ -34,32 +34,43 @@ export default function Dashboard() {
         checkSalesforceKeys();
     }, [router]);
 
-    const sendMessage = async () => {
-        if (!input.trim()) return;
+    // Updated sendMessage function
+    const sendMessage = async (text) => {
+        // Use the provided text if available; otherwise use the input state.
+        const messageToSend = text !== undefined ? text : input;
+        if (!messageToSend.trim()) return;
 
         setLoading(true);
 
-        const userMessage = { role: 'user', content: input };
+        // Add user's message to the conversation.
+        const userMessage = { role: 'user', content: messageToSend };
         setMessages((prev) => [...prev, userMessage]);
 
         try {
-            setInput('');
+            // If this call is from the text page, clear the input.
+            if (text === undefined) {
+                setInput('');
+            }
+
             const res = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: input, sessionId }),
+                body: JSON.stringify({ query: messageToSend, sessionId }),
             });
-
             const data = await res.json();
 
             const agentMessage = { role: 'agent', content: data.reply };
             setMessages((prev) => [...prev, agentMessage]);
+
+            // Return the AI response for the voice component.
+            return data;
         } catch (error) {
             console.error('Error sending message:', error);
             setMessages((prev) => [
                 ...prev,
                 { role: 'error', content: 'Error: Could not fetch response.' },
             ]);
+            return null;
         } finally {
             setInput('');
             setLoading(false);
@@ -98,10 +109,12 @@ export default function Dashboard() {
         <div className="bg-black text-white mt-24 flex flex-col items-center justify-center">
             {checkingKeys ? (
                 <div>
-                    <h1 className="text-2xl font-bold mb-4 justify-center items-center">Checking Your Salesforce Connection</h1>
+                    <h1 className="text-2xl font-bold mb-4 justify-center items-center">
+                        Checking Your Salesforce Connection
+                    </h1>
                 </div>
             ) : (
-                <div className='flex flex-col items-center w-full h-full'>
+                <div className="flex flex-col items-center w-full h-full">
                     <div className="absolute top-36 right-10 flex items-center space-x-3">
                         <span className="text-sm">Voice Chat</span>
                         <div
@@ -118,10 +131,9 @@ export default function Dashboard() {
 
                     <h1 className="text-2xl font-bold mb-4">Chat with IRIS</h1>
                     {isVoiceEnabled ? (
-                        <VoiceChat
+                        <VoiceInteraction
                             isVoiceEnabled={isVoiceEnabled}
                             sendMessage={sendMessage}
-                            sessionId={sessionId}
                             setMessages={setMessages}
                             messages={messages}
                         />
@@ -134,15 +146,18 @@ export default function Dashboard() {
                                 {messages.map((msg, index) => (
                                     <div
                                         key={index}
-                                        className={`mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                                        className={`mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'
+                                            }`}
                                     >
                                         <div
                                             className={`inline-block px-3 py-2 rounded-lg ${msg.role === 'user'
-                                                ? 'bg-blue-500 text-white'
-                                                : 'bg-gray-200 text-black'
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'bg-gray-200 text-black'
                                                 }`}
                                         >
-                                            <strong className="block">{msg.role === 'user' ? 'You' : 'IRIS'}:</strong>
+                                            <strong className="block">
+                                                {msg.role === 'user' ? 'You' : 'IRIS'}:
+                                            </strong>
                                             <ReactMarkdown
                                                 components={{
                                                     a: ({ node, ...props }) => (
@@ -178,8 +193,8 @@ export default function Dashboard() {
                                     onClick={sendMessage}
                                     disabled={loading}
                                     className={`p-2 rounded-md h-10 flex items-center justify-center ${loading
-                                        ? 'bg-gray-400 cursor-not-allowed'
-                                        : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
+                                            ? 'bg-gray-400 cursor-not-allowed'
+                                            : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                                         } text-white`}
                                 >
                                     {loading ? 'Sending...' : 'Send'}
@@ -189,6 +204,6 @@ export default function Dashboard() {
                     )}
                 </div>
             )}
-        </div >
+        </div>
     );
 }
