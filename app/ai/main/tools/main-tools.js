@@ -7,6 +7,7 @@ import { salesforceDescribeTool } from './salesforce/queries/describe-salesforce
 import { salesforceObjectLookupTool } from './salesforce/queries/object-lookup';
 import { salesforceObjectLinkTool } from './salesforce/queries/salesforce-link-finder';
 import { dynamicSalesforceQueryTool } from './salesforce/queries/dynamic-query-tool';
+import { salesforceCompositeTool } from './salesforce/queries/composite-tool';
 
 // Action Tools
 import { salesforceUpdateTool } from './salesforce/actions/update-records';
@@ -15,6 +16,8 @@ import { salesforceCustomApexTool } from './salesforce/actions/custom-apex';
 import { salesforceCreateTool } from './salesforce/actions/create-record';
 import { salesforceMetadataTool } from './salesforce/actions/salesforce-metadata-tool';
 import { webSearchTool } from './salesforce/actions/search-internet';
+import { salesforceRestApiTool } from './salesforce/queries/rest-actions';
+import { salesforceBulkTool } from './salesforce/queries/salesforce-bulk';
 
 export const mainToolsNode = new ToolNode([
     describeSalesforceStructure,
@@ -29,6 +32,9 @@ export const mainToolsNode = new ToolNode([
     salesforceCustomApexTool,
     salesforceMetadataTool,
     webSearchTool,
+    salesforceCompositeTool,
+    salesforceRestApiTool,
+    salesforceBulkTool,
 ]);
 
 export const toolsArray = [
@@ -44,4 +50,7 @@ export const toolsArray = [
     salesforceCustomApexTool,
     salesforceMetadataTool,
     webSearchTool,
+    salesforceCompositeTool,
+    salesforceRestApiTool,
+    salesforceBulkTool,
 ];
