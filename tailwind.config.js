@@ -10,6 +10,9 @@ module.exports = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        irisBlue: "#D1F8EF",
+        irisSky: "#A1E3F9",
+        irisYellow: "#F4F8D3",
       },
     },
   },

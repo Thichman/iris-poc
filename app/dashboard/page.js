@@ -106,7 +106,7 @@ export default function Dashboard() {
     }, [messages]);
 
     return (
-        <div className="bg-black text-white mt-24 flex flex-col items-center justify-center">
+        <div className="mt-24 flex flex-col items-center justify-center">
             {checkingKeys ? (
                 <div>
                     <h1 className="text-2xl font-bold mb-4 justify-center items-center">
@@ -141,7 +141,7 @@ export default function Dashboard() {
                         <>
                             <div
                                 ref={messageContainerRef}
-                                className="bg-white text-black rounded-lg shadow-md p-4 w-full max-w-3xl h-96 overflow-y-auto mb-4"
+                                className="bg-gray-100 text-black rounded-lg shadow-lg p-4 w-full max-w-3xl h-96 overflow-y-auto mb-4 border border-gray-500"
                             >
                                 {messages.map((msg, index) => (
                                     <div
@@ -178,7 +178,7 @@ export default function Dashboard() {
                                     </div>
                                 ))}
                             </div>
-                            <div className="flex gap-2 w-full max-w-3xl items-start">
+                            <div className="flex gap-2 w-full max-w-3xl items-start mt-4">
                                 <textarea
                                     ref={textareaRef}
                                     value={input}
@@ -186,7 +186,7 @@ export default function Dashboard() {
                                     onInput={adjustTextareaHeight}
                                     onKeyDown={handleKeyDown}
                                     placeholder="Type your message..."
-                                    className="flex-1 p-2 rounded-md border border-gray-300 text-black resize-none overflow-hidden"
+                                    className="flex-1 p-2 rounded-md border border-gray-300 text-black resize-none overflow-hidden bg-gray-100"
                                     rows={1}
                                 />
                                 <button
