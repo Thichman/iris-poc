@@ -23,17 +23,14 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-8">Why Choose Iris?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="feature-item p-4 bg-white shadow-md rounded">
-              <img src="/voice-command-icon.png" alt="Voice Commands" className="w-16 h-16 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Voice Commands</h3>
               <p>Update your CRM effortlessly using natural language voice inputs.</p>
             </div>
             <div className="feature-item p-4 bg-white shadow-md rounded">
-              <img src="/salesforce-integration-icon.png" alt="Salesforce Integration" className="w-16 h-16 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Seamless Integration</h3>
               <p>Connect Iris directly with Salesforce for real-time updates.</p>
             </div>
             <div className="feature-item p-4 bg-white shadow-md rounded">
-              <img src="/time-saving-icon.png" alt="Time Saving" className="w-16 h-16 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Save Time</h3>
               <p>Reduce manual data entry and increase productivity.</p>
             </div>

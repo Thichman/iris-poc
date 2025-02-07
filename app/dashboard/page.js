@@ -186,7 +186,7 @@ export default function Dashboard() {
                                     onInput={adjustTextareaHeight}
                                     onKeyDown={handleKeyDown}
                                     placeholder="Type your message..."
-                                    className="flex-1 p-2 rounded-md border border-gray-300 text-black resize-none overflow-hidden"
+                                    className="flex-1 p-2 rounded-md border border-gray-300 text-black resize-none overflow-hidden bg-gray-100"
                                     rows={1}
                                 />
                                 <button
