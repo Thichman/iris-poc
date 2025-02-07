@@ -117,7 +117,7 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-full w-full pt-40">
+        <div className="flex flex-col items-center justify-center h-full w-full pt-32">
             <motion.div
                 className="relative flex items-center justify-center w-80 h-80 rounded-full shadow-2xl border-8 border-blue-500 bg-transparent cursor-pointer"
                 animate={interactionState}
@@ -142,6 +142,16 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
                 <motion.div
                     className="absolute w-48 h-48 border-4 border-blue-200 rounded-full"
                     animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.7, 0.4, 0.7] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                />
+                <motion.div
+                    className="absolute w-48 h-48 border-4 border-blue-200 rounded-full"
+                    animate={{ scale: [0.8, 1, 0.8], opacity: [0.7, 0.4, 0.7] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                />
+                <motion.div
+                    className="absolute w-48 h-48 border-4 border-blue-200 rounded-full"
+                    animate={{ scale: [0.7, .9, 0.7], opacity: [0.7, 0.4, 0.7] }}
                     transition={{ duration: 2, repeat: Infinity, delay: 1 }}
                 />
             </motion.div>
