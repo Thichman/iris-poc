@@ -1,5 +1,5 @@
 import { ChatOpenAI } from '@langchain/openai';
-import { toolsArray } from './tools/main-tools';
+import { toolsArray } from './tools/salesforce-tools';
 
 // Define and export the main model
 export const mainModel = new ChatOpenAI({

@@ -1,6 +1,6 @@
 import { mainModel } from './main-agent';
 import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
-import { mainToolsNode } from './tools/main-tools';
+import { mainToolsNode } from './tools/salesforce-tools';
 
 async function callMainAgent(state) {
     const { messages } = state;
