@@ -19,7 +19,7 @@ import { webSearchTool } from './salesforce/actions/search-internet';
 import { salesforceRestApiTool } from './salesforce/queries/rest-actions';
 import { salesforceBulkTool } from './salesforce/queries/salesforce-bulk';
 
-export const mainToolsNode = new ToolNode([
+export const salesforceToolsNode = new ToolNode([
     describeSalesforceStructure,
     salesforceQueryTool,
     salesforceDescribeTool,
@@ -37,7 +37,7 @@ export const mainToolsNode = new ToolNode([
     salesforceBulkTool,
 ]);
 
-export const toolsArray = [
+export const salesforceToolsArray = [
     salesforceQueryTool,
     salesforceDescribeTool,
     salesforceObjectLookupTool,

@@ -1,5 +1,5 @@
 import { ChatOpenAI } from '@langchain/openai';
-import { toolsArray } from './tools/salesforce-tools';
+import { salesforceToolsArray } from './tools/salesforce-tools';
 
 // Define and export the main model
 export const mainModel = new ChatOpenAI({
@@ -54,4 +54,4 @@ export const mainModel = new ChatOpenAI({
 
     Your goal is to be proactive, resourceful, and accurate. Use all tools efficiently, guide the user effectively, and ensure a seamless experience when interacting with Salesforce.
     `,
-}).bindTools(toolsArray);
+}).bindTools(salesforceToolsArray);

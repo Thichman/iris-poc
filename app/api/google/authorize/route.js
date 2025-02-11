@@ -1,3 +1,4 @@
+// /api/google/authorize.js
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
@@ -18,10 +19,19 @@ export async function GET() {
         return NextResponse.json({ error: 'PKCE generation failed' }, { status: 500 });
     }
 
-    const authUrl = `${process.env.SALESFORCE_AUTH_URL}?response_type=code&client_id=${process.env.SALESFORCE_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.SALESFORCE_REDIRECT_URI)}&scope=api refresh_token&state=salesforce&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+    // Construct the Google OAuth 2.0 authorization URL.
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `response_type=code&` +
+        `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
+        `redirect_uri=${encodeURIComponent(process.env.GOOGLE_REDIRECT_URI)}&` +
+        `scope=${encodeURIComponent('https://www.googleapis.com/auth/drive.readonly')}&` +
+        `access_type=offline&` +
+        `state=google&` +
+        `code_challenge=${codeChallenge}&` +
+        `code_challenge_method=S256`;
 
     const response = NextResponse.redirect(authUrl);
-    response.cookies.set('pkce_verifier', codeVerifier, {
+    response.cookies.set('google_pkce_verifier', codeVerifier, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

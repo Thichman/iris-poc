@@ -1,6 +1,6 @@
 import { mainModel } from './main-agent';
 import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
-import { mainToolsNode } from './tools/salesforce-tools';
+import { salesforceToolsNode } from './tools/salesforce-tools';
 
 async function callMainAgent(state) {
     const { messages } = state;
@@ -66,7 +66,7 @@ async function handleFailure(state) {
 
 export const mainWorkflow = new StateGraph(MessagesAnnotation)
     .addNode('main_agent', callMainAgent)
-    .addNode('tools', mainToolsNode)
+    .addNode('tools', salesforceToolsNode)
     .addNode('handle_failure', handleFailure)
     .addEdge('__start__', 'main_agent')
     .addConditionalEdges('main_agent', shouldContinue)
