@@ -18,6 +18,7 @@ import { salesforceMetadataTool } from './salesforce/actions/salesforce-metadata
 import { webSearchTool } from './salesforce/actions/search-internet';
 import { salesforceRestApiTool } from './salesforce/queries/rest-actions';
 import { salesforceBulkTool } from './salesforce/queries/salesforce-bulk';
+import { salesforceCreateReportTool } from './salesforce/actions/create-report';
 
 export const mainToolsNode = new ToolNode([
     describeSalesforceStructure,
@@ -35,6 +36,7 @@ export const mainToolsNode = new ToolNode([
     salesforceCompositeTool,
     salesforceRestApiTool,
     salesforceBulkTool,
+    salesforceCreateReportTool,
 ]);
 
 export const toolsArray = [
@@ -53,4 +55,5 @@ export const toolsArray = [
     salesforceCompositeTool,
     salesforceRestApiTool,
     salesforceBulkTool,
+    salesforceCreateReportTool,
 ];
