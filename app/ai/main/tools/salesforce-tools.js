@@ -18,6 +18,7 @@ import { salesforceMetadataTool } from './salesforce/actions/salesforce-metadata
 import { webSearchTool } from './salesforce/actions/search-internet';
 import { salesforceRestApiTool } from './salesforce/queries/rest-actions';
 import { salesforceBulkTool } from './salesforce/queries/salesforce-bulk';
+import { salesforceCreateReportTool } from './salesforce/actions/create-report';
 
 // Google Tools
 import { googleCalendarTool } from './google/actions/google-calendar';
@@ -38,6 +39,7 @@ export const mainToolsNode = new ToolNode([
     salesforceCompositeTool,
     salesforceRestApiTool,
     salesforceBulkTool,
+    salesforceCreateReportTool,
     googleCalendarTool,
 ]);
 
@@ -57,4 +59,5 @@ export const salesforceToolsArray = [
     salesforceCompositeTool,
     salesforceRestApiTool,
     salesforceBulkTool,
+    salesforceCreateReportTool,
 ];

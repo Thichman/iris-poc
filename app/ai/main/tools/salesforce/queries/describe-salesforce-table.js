@@ -6,6 +6,11 @@ export const salesforceDescribeTool = tool(
     async (input) => {
         const { objectName } = input;
 
+        const trimmedObjectName = objectName.trim();
+        if (!trimmedObjectName) {
+            return { error: 'Invalid input: "objectName" is required and must be a non-empty string.' };
+        }
+
         // Validate input
         if (!objectName || typeof objectName !== 'string') {
             return {
