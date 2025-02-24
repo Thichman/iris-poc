@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import React from 'react';
 
 export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages, setMessages }) {
     const recognitionRef = useRef(null);
@@ -15,6 +16,7 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
             return;
         }
 
+        // @ts-ignore
         const recognition = new window.webkitSpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
