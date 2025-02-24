@@ -3,6 +3,8 @@ import { HumanMessage } from '@langchain/core/messages';
 import { mainWorkflow } from '@/app/ai/main/main-workflow';
 import { createClient } from '@/utils/supabase/server';
 
+export const maxDuration = 300
+
 export async function POST(req) {
     try {
         const { query } = await req.json();
