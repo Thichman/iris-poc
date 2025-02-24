@@ -1,7 +1,7 @@
 // googleClient.js
 import axios from 'axios';
+import { google } from 'googleapis';
 import { createClient } from '@/utils/supabase/server';
-
 /**
  * Retrieves Google credentials for the current user.
  * @returns {Promise<Object>} - User's Google credentials.
@@ -28,31 +28,24 @@ async function getGoogleKeys() {
  * @returns {Promise<AxiosInstance>} - Configured Axios instance.
  */
 export async function createGoogleClient() {
-    const { access_token, refresh_token } = await getGoogleKeys();
+    // Retrieve tokens from the database
+    const tokens = await getGoogleKeys();
 
-    const client = axios.create({
-        baseURL: 'https://www.googleapis.com',
-        headers: {
-            Authorization: `Bearer ${access_token}`,
-            'Content-Type': 'application/json',
-        },
-    });
-
-    // Interceptor to handle token refresh on 401 Unauthorized responses.
-    client.interceptors.response.use(
-        response => response,
-        async error => {
-            if (error.response?.status === 401) {
-                const newTokens = await refreshGoogleToken(refresh_token);
-                client.defaults.headers.Authorization = `Bearer ${newTokens.access_token}`;
-                error.config.headers.Authorization = `Bearer ${newTokens.access_token}`;
-                return axios.request(error.config);
-            }
-            return Promise.reject(error);
-        }
+    // Initialize the OAuth2 client with environment variables
+    const oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        process.env.GOOGLE_REDIRECT_URI
     );
 
-    return client;
+    // Set the retrieved tokens as credentials on the OAuth2 client
+    oauth2Client.setCredentials({
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+    });
+
+    // Return the authenticated client
+    return oauth2Client;
 }
 
 /**

@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { saveTokensToBackend } from '../../ai/utils/salesforce/set-keys';
 import { saveGoogleTokensToBackend } from '../../ai/utils/google/save-google-tokens';
+import { useRouter } from 'next/navigation'
 
 export default function Authenticate() {
     const searchParams = useSearchParams();
@@ -14,55 +15,69 @@ export default function Authenticate() {
     const [googleSuccess, setGoogleSuccess] = useState(false);
     const [validated, setValidated] = useState(false);
 
-    // Validate existing Salesforce keys on component mount
-    useEffect(() => {
-        async function validateSfKeys() {
-            setLoading(true);
-            try {
-                const response = await fetch('/api/database/salesforce/check-user-keys');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status === 'valid') {
-                        setSfSuccess(true);
-                        setValidated(true);
-                    } else {
-                        setValidated(false);
-                    }
+    const router = useRouter();
+
+    // Function to validate Salesforce keys
+    async function validateSfKeys() {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/database/salesforce/check-user-keys');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'valid') {
+                    setSfSuccess(true);
+                    setValidated(true);
                 } else {
                     setValidated(false);
                 }
-            } catch (err) {
-                console.error('Error validating Salesforce keys:', err);
+            } else {
                 setValidated(false);
-            } finally {
-                setLoading(false);
             }
+        } catch (err) {
+            console.error('Error validating Salesforce keys:', err);
+            setValidated(false);
+        } finally {
+            setLoading(false);
         }
-        async function validateGoogleKeys() {
-            setGoogleLoading(true);
-            try {
-                const response = await fetch('/api/database/google/check-user-keys');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status === 'valid') {
-                        setGoogleSuccess(true);
-                    } else {
-                        setGoogleSuccess(false);
-                    }
+    }
+
+    // Function to validate Google keys
+    async function validateGoogleKeys() {
+        setGoogleLoading(true);
+        try {
+            const response = await fetch('/api/database/google/check-user-keys');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'valid') {
+                    setGoogleSuccess(true);
                 } else {
                     setGoogleSuccess(false);
                 }
-            } catch (err) {
-                console.error('Error validating Google keys:', err);
+            } else {
                 setGoogleSuccess(false);
-            } finally {
-                setGoogleLoading(false);
             }
+        } catch (err) {
+            console.error('Error validating Google keys:', err);
+            setGoogleSuccess(false);
+        } finally {
+            setGoogleLoading(false);
         }
+    }
 
-        validateGoogleKeys();
-        validateSfKeys();
-    }, []);
+    // On mount, decide which validations to run based on the "state" query parameter.
+    useEffect(() => {
+        const stateParam = searchParams.get('state');
+
+        if (stateParam === 'google') {
+            validateGoogleKeys();
+        } else if (stateParam === 'salesforce') {
+            validateSfKeys();
+        } else {
+            // If no state is provided, run both validations.
+            validateGoogleKeys();
+            validateSfKeys();
+        }
+    }, [searchParams]);
 
     // Handle authorization code in query params
     useEffect(() => {
@@ -79,9 +94,7 @@ export default function Authenticate() {
                 try {
                     const response = await fetch('/api/google/callback', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ code }),
                     });
 
@@ -106,9 +119,9 @@ export default function Authenticate() {
                     setError(err.message);
                 } finally {
                     setGoogleLoading(false);
+                    router.push('/dashboard/authenticate');
                 }
             }
-
             fetchGoogleTokens();
         } else if (state === 'salesforce' && !sfSuccess) {
             // Salesforce OAuth flow
@@ -118,9 +131,7 @@ export default function Authenticate() {
                 try {
                     const response = await fetch('/api/salesforce/callback', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ code }),
                     });
 
@@ -143,9 +154,9 @@ export default function Authenticate() {
                     setError(err.message);
                 } finally {
                     setLoading(false);
+                    router.push('/dashboard/authenticate');
                 }
             }
-
             fetchSfTokens();
         }
     }, [searchParams, sfSuccess, googleSuccess]);
