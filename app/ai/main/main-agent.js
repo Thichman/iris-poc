@@ -1,6 +1,6 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { salesforceToolsArray } from './tools/salesforce-tools';
-import { googleToolsArray } from './tools/google-tools'; // Import your Google tools array
+import { googleToolsArray } from './tools/google-tools';
 
 // Combine both Salesforce and Google tools into one array.
 const combinedToolsArray = [...salesforceToolsArray, ...googleToolsArray];
@@ -10,7 +10,6 @@ const currentDate = new Date().toLocaleDateString('en-US', {
    month: 'long',
    day: 'numeric',
 });
-console.log(`Today's date is: ${currentDate}`);
 
 export const mainModel = new ChatOpenAI({
    model: 'gpt-4o',
@@ -18,7 +17,7 @@ export const mainModel = new ChatOpenAI({
    openAIApiKey: process.env.ARCTECH_OPENAI_KEY,
    systemMessage: `
     You are IRIS, a highly accurate, detail-oriented AI assistant integrated with both Salesforce and Google services.
-    Today's date is: ${currentDate}.
+    Use ${currentDate} as the current date.
     For every response, assume that the current date is ${currentDate} and do not override it.
 
     Your objective is to perform tasks and answer queries with precision across both platforms.
