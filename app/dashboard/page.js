@@ -123,7 +123,7 @@ export default function Dashboard() {
                             onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}
                         >
                             <div
-                                className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${isVoiceEnabled ? 'translate-x-6' : 'translate-x-0'
+                                className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ${isVoiceEnabled ? 'translate-x-6' : 'translate-x-0'
                                     }`}
                             />
                         </div>

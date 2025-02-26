@@ -95,13 +95,33 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
         }
     };
 
-    const speak = (text) => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onend = () => {
-            // When speech ends, return to idle.
-            setInteractionState("idle");
-        };
-        window.speechSynthesis.speak(utterance);
+    const speak = async (text) => {
+        try {
+            const response = await fetch('/api/ai/voice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text }),
+            });
+            const data = await response.json();
+            const conversationalText = data.reply || text;
+
+            const voices = window.speechSynthesis.getVoices();
+            const utterance = new SpeechSynthesisUtterance(conversationalText);
+            utterance.voice = voices[0];
+            utterance.onend = () => {
+                setInteractionState("idle");
+            };
+            window.speechSynthesis.speak(utterance);
+        } catch (error) {
+            console.error("Error in speak function:", error);
+            const voices = window.speechSynthesis.getVoices();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = voices[0];
+            utterance.onend = () => {
+                setInteractionState("idle");
+            };
+            window.speechSynthesis.speak(utterance);
+        }
     };
 
     // Define animation variants for the different interaction states.
