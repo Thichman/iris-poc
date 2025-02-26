@@ -21,13 +21,11 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
         recognition.lang = "en-US";
 
         recognition.onstart = () => {
-            console.log("🎤 Listening...");
             isRecognitionActiveRef.current = true;
         };
 
         recognition.onresult = async (event) => {
             const lastResult = event.results[event.results.length - 1][0].transcript;
-            console.log("🗣️ Recognized:", lastResult);
             isRecognitionActiveRef.current = false;
             recognition.stop();
             // Transition to thinking state while waiting for AI response.
@@ -45,7 +43,6 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
         };
 
         recognition.onend = () => {
-            console.log("🔇 Speech Recognition Stopped");
             isRecognitionActiveRef.current = false;
             // Do not auto-restart; wait for user click.
         };
@@ -53,7 +50,6 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
         recognitionRef.current = recognition;
 
         return () => {
-            console.log("🛑 Cleanup: Stopping Recognition");
             if (recognitionRef.current) {
                 recognitionRef.current.abort();
                 isRecognitionActiveRef.current = false;
@@ -64,7 +60,6 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
     // Stop recognition if voice chat is disabled.
     useEffect(() => {
         if (!isVoiceEnabled && recognitionRef.current) {
-            console.log("🚫 Voice Chat Disabled. Stopping recognition.");
             recognitionRef.current.stop();
             isRecognitionActiveRef.current = false;
             setInteractionState("idle");
@@ -74,7 +69,6 @@ export default function VoiceInteraction({ isVoiceEnabled, sendMessage, messages
     // Start listening when the user clicks on the component.
     const startListening = () => {
         if (isVoiceEnabled && recognitionRef.current && !isRecognitionActiveRef.current) {
-            console.log("Starting speech recognition...");
             isRecognitionActiveRef.current = true;
             setInteractionState("listening");
             recognitionRef.current.start();
