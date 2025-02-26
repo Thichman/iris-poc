@@ -20,6 +20,9 @@ import { salesforceRestApiTool } from './salesforce/queries/rest-actions';
 import { salesforceBulkTool } from './salesforce/queries/salesforce-bulk';
 import { salesforceCreateReportTool } from './salesforce/actions/create-report';
 
+// Google Tools
+import { googleCalendarTool } from './google/actions/google-calendar';
+
 export const mainToolsNode = new ToolNode([
     describeSalesforceStructure,
     salesforceQueryTool,
@@ -37,9 +40,10 @@ export const mainToolsNode = new ToolNode([
     salesforceRestApiTool,
     salesforceBulkTool,
     salesforceCreateReportTool,
+    googleCalendarTool,
 ]);
 
-export const toolsArray = [
+export const salesforceToolsArray = [
     salesforceQueryTool,
     salesforceDescribeTool,
     salesforceObjectLookupTool,
