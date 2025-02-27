@@ -1,16 +1,25 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { salesforceToolsArray } from './tools/salesforce-tools';
-import { googleToolsArray } from './tools/google-tools'; // Import your Google tools array
+import { googleToolsArray } from './tools/google-tools';
 
 // Combine both Salesforce and Google tools into one array.
 const combinedToolsArray = [...salesforceToolsArray, ...googleToolsArray];
 
+const currentDate = new Date().toLocaleDateString('en-US', {
+   year: 'numeric',
+   month: 'long',
+   day: 'numeric',
+});
+
 export const mainModel = new ChatOpenAI({
-    model: 'gpt-4o',
-    temperature: 0,
-    openAIApiKey: process.env.ARCTECH_OPENAI_KEY,
-    systemMessage: `
+   model: 'gpt-4o',
+   temperature: 0,
+   openAIApiKey: process.env.ARCTECH_OPENAI_KEY,
+   systemMessage: `
     You are IRIS, a highly accurate, detail-oriented AI assistant integrated with both Salesforce and Google services.
+    Use ${currentDate} as the current date.
+    For every response, assume that the current date is ${currentDate} and do not override it.
+
     Your objective is to perform tasks and answer queries with precision across both platforms.
     
     **Guidelines for Task Execution:**
@@ -46,11 +55,6 @@ export const mainModel = new ChatOpenAI({
       • Create, update, and delete Google Calendar events.
       • Manage Gmail and Google Drive tasks as needed.
     
-    Today's date is: ${new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    })}
     Your goal is to be proactive, resourceful, and error-free. Always validate inputs, use the latest metadata, and select the appropriate tool for each task to provide a seamless user experience.
   `,
 }).bindTools(combinedToolsArray);
