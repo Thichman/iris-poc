@@ -6,6 +6,11 @@ import { createClient } from '@/utils/supabase/server';
 export const maxDuration = 60;
 
 export async function POST(req) {
+    const currentDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
     try {
         const { query } = await req.json();
 
@@ -28,7 +33,7 @@ export async function POST(req) {
             console.log('No chat history found, starting a new one.');
         }
 
-        chatHistory.push(new HumanMessage(query));
+        chatHistory.push(new HumanMessage(`Current date: ${currentDate} - ${query}`));
 
         let response;
         try {
