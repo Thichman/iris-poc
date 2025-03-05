@@ -21,7 +21,8 @@ export async function GET() {
 
     const scopes = [
         'https://www.googleapis.com/auth/calendar',
-        'https://www.googleapis.com/auth/calendar.events'
+        'https://www.googleapis.com/auth/calendar.events',
+        'https://www.googleapis.com/auth/drive'
     ];
 
     // Construct the Google OAuth 2.0 authorization URL.

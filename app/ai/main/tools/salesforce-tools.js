@@ -22,6 +22,7 @@ import { salesforceCreateReportTool } from './salesforce/actions/create-report';
 
 // Google Tools
 import { googleCalendarTool } from './google/actions/google-calendar';
+import { googleDriveFileTool } from './google/actions/google-drive';
 
 export const mainToolsNode = new ToolNode([
     describeSalesforceStructure,
@@ -41,6 +42,7 @@ export const mainToolsNode = new ToolNode([
     salesforceBulkTool,
     salesforceCreateReportTool,
     googleCalendarTool,
+    googleDriveFileTool,
 ]);
 
 export const salesforceToolsArray = [
