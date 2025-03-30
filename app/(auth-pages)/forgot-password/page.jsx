@@ -41,7 +41,7 @@ export default function ForgotPassword() {
               />
               <button
                 type="submit"
-                formAction={forgotPasswordAction()}
+                formAction={forgotPasswordAction}
                 className="w-full py-3 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition"
               >
                 Reset Password
