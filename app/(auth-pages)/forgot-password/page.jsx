@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { SmtpMessage } from "../smtp-message";
+import { useSearchParams } from "next/navigation";
 import { forgotPasswordAction } from "@/app/actions";
 
-export default function ForgotPassword(props) {
-  const searchParams = props.searchParams;
+export default function ForgotPassword() {
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
 
   return (
     <div className="h-full flex w-full flex-col items-center justify-center space-y-10">
@@ -24,7 +26,7 @@ export default function ForgotPassword(props) {
                 Sign in
               </Link>
             </p>
-            <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+            <div className="flex flex-col gap-2 mt-8">
               <label
                 htmlFor="email"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -39,12 +41,12 @@ export default function ForgotPassword(props) {
               />
               <button
                 type="submit"
-                formAction={forgotPasswordAction}
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                formAction={forgotPasswordAction()}
+                className="w-full py-3 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition"
               >
                 Reset Password
               </button>
-              <div message={searchParams} />
+              {message && <p className="text-green-600 text-center">{message}</p>}
             </div>
           </form>
         </div>
