@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
-    const [isPending, startTransition] = useTransition();
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const supabase = useSupabaseClient();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,30 +18,19 @@ export default function ResetPasswordPage() {
             setError("Passwords do not match.");
             return;
         }
+
         setError("");
-        startTransition(async () => {
-            try {
-                const formData = new FormData();
-                formData.append("password", password);
-                formData.append("confirmPassword", confirmPassword);
+        setLoading(true);
 
-                const res = await fetch("/api/auth/reset-password", {
-                    method: "POST",
-                    body: formData,
-                });
+        const { error } = await supabase.auth.updateUser({ password });
 
-                if (res.ok) {
-                    // On success, redirect the user to the sign-in page or a success screen.
-                    router.push("/sign-in");
-                } else {
-                    const data = await res.json();
-                    setError(data.error || "Password update failed.");
-                }
-            } catch (err) {
-                setError("An unexpected error occurred.");
-                console.error(err);
-            }
-        });
+        if (error) {
+            setError(error.message);
+        } else {
+            router.push("/dashboard");
+        }
+
+        setLoading(false);
     };
 
     return (
@@ -47,38 +38,32 @@ export default function ResetPasswordPage() {
             <h1 className="text-4xl font-bold text-gray-900 mb-8">Reset Password</h1>
             <form onSubmit={handleSubmit} className="w-full max-w-md">
                 <div className="mb-4">
-                    <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
-                        New Password
-                    </label>
+                    <label className="block text-gray-700 font-bold mb-2">New Password</label>
                     <input
                         type="password"
-                        id="password"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        className="shadow border rounded w-full py-2 px-3"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="confirmPassword" className="block text-gray-700 font-bold mb-2">
-                        Confirm Password
-                    </label>
+                    <label className="block text-gray-700 font-bold mb-2">Confirm Password</label>
                     <input
                         type="password"
-                        id="confirmPassword"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        className="shadow border rounded w-full py-2 px-3"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                     />
                 </div>
-                {error && <div className="text-red-500 mb-4">{error}</div>}
+                {error && <p className="text-red-500">{error}</p>}
                 <button
                     type="submit"
                     className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
-                    disabled={isPending}
+                    disabled={loading}
                 >
-                    {isPending ? "Resetting..." : "Reset Password"}
+                    {loading ? "Resetting..." : "Reset Password"}
                 </button>
             </form>
         </div>
