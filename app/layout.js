@@ -4,7 +4,6 @@ import AuthButton from "@/components/header";
 import { createClient } from '@/utils/supabase/server'
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react"
-import SupabaseProvider from "@/utils/supabase/provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -52,9 +51,7 @@ export default async function RootLayout({ children }) {
             )}
             <AuthButton />
           </header>
-          <SupabaseProvider>
-            {children}
-          </SupabaseProvider>
+          {children}
         </div>
       </body>
     </html>

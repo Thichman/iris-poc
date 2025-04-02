@@ -28,25 +28,53 @@ async function getGoogleKeys() {
  * @returns {Promise<AxiosInstance>} - Configured Axios instance.
  */
 export async function createGoogleClient() {
-    // Retrieve tokens from the database
     const tokens = await getGoogleKeys();
 
-    // Initialize the OAuth2 client with environment variables
     const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET,
         process.env.GOOGLE_REDIRECT_URI
     );
 
-    // Set the retrieved tokens as credentials on the OAuth2 client
-    oauth2Client.setCredentials({
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
+    // Check if token is expired
+    const expiryTime = new Date(tokens.expiry).getTime();
+    const now = Date.now();
+
+    if (expiryTime <= now) {
+        console.log('[Google] Access token expired — refreshing...');
+        const refreshed = await refreshGoogleToken(tokens.refresh_token);
+        oauth2Client.setCredentials({
+            access_token: refreshed.access_token,
+            refresh_token: tokens.refresh_token,
+        });
+    } else {
+        oauth2Client.setCredentials({
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
+        });
+    }
+
+    // Save updated tokens if Google rotates them
+    oauth2Client.on('tokens', async (newTokens) => {
+        console.log('[Google] Received new tokens:', newTokens);
+        if (!newTokens.access_token) return;
+
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        await supabase
+            .from('google_credentials')
+            .update({
+                access_token: newTokens.access_token,
+                expiry: new Date(Date.now() + (newTokens.expiry_date || 3600 * 1000)).toISOString(),
+                ...(newTokens.refresh_token && { refresh_token: newTokens.refresh_token }),
+            })
+            .eq('user_id', user.id);
     });
 
-    // Return the authenticated client
     return oauth2Client;
 }
+
 
 /**
  * Refreshes the Google access token using the refresh token.

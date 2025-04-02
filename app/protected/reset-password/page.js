@@ -1,16 +1,16 @@
 "use client";
 
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from '@/utils/supabase/server'
 
-export default function ResetPasswordPage() {
+export default async function ResetPasswordPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const supabase = useSupabaseClient();
+    const supabase = await createClient()
 
     const handleSubmit = async (e) => {
         e.preventDefault();

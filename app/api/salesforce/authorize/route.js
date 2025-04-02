@@ -21,6 +21,7 @@ export async function GET() {
     const authUrl = `${process.env.SALESFORCE_AUTH_URL}?response_type=code&client_id=${process.env.SALESFORCE_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.SALESFORCE_REDIRECT_URI)}&scope=api refresh_token&state=salesforce&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 
     const response = NextResponse.redirect(authUrl);
+    console.log(response);
     response.cookies.set('pkce_verifier', codeVerifier, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
