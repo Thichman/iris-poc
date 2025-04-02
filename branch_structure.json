@@ -1,0 +1,21 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "creating-multi-agent",
+    "main",
+    "origin",
+    "share-feature-v1"
+  ],
+  "parent": {
+    "creating-multi-agent": "main",
+    "main": null,
+    "origin": "main",
+    "share-feature-v1": "main"
+  },
+  "order": [
+    "main",
+    "creating-multi-agent",
+    "origin",
+    "share-feature-v1"
+  ]
+}
